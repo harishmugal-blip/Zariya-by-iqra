@@ -9,6 +9,7 @@ import { useCart } from "@/store/use-cart";
 import { useWishlist } from "@/store/use-wishlist";
 import { useCompare } from "@/store/use-compare";
 import { useUI } from "@/store/use-ui";
+import { useCurrency } from "@/store/use-currency";
 import { Stars } from "./stars";
 import { toast } from "sonner";
 
@@ -30,6 +31,7 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
   const openCompare = useCompare((s) => s.openCompare);
   const openQuickView = useUI((s) => s.openQuickView);
   const openProduct = useUI((s) => s.openProduct);
+  const fmt = useCurrency((s) => s.format);
   const discount = discountPercent(product.price, product.compareAtPrice);
 
   const handleAdd = (e: React.MouseEvent) => {
@@ -236,11 +238,11 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
         {/* Price */}
         <div className="mt-auto flex items-end gap-2 pt-4">
           <span className="price-shimmer font-serif text-xl font-bold">
-            {formatPrice(product.price)}
+            {fmt(product.price)}
           </span>
           {product.compareAtPrice && (
             <span className="text-sm text-muted-foreground line-through">
-              {formatPrice(product.compareAtPrice)}
+              {fmt(product.compareAtPrice)}
             </span>
           )}
         </div>

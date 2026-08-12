@@ -660,3 +660,49 @@ Stage Summary:
 - **Trust Badges bar** below hero (6 premium trust signals).
 - **Gift Card balance check** page + API with demo data.
 - Next round opportunities: AR try-on, personalized recommendations, live inventory badges, product video showcase, advanced search filters, wishlist import from URL, more artisan video content, currency-aware pricing throughout.
+
+---
+Task ID: 19
+Agent: Main (Z.ai Code) — Cron Review Round 7
+Task: QA the live site, add Picked for You personalized recommendations, currency-aware pricing throughout
+
+Work Log:
+- Reviewed worklog — project stable with 22 homepage sections, admin, journal, order tracking, comparison, live chat, loyalty, gift cards, referral, lookbook, gift card balance, trust badges, stock urgency from Rounds 1-6.
+- agent-browser QA: verified all sections render, all routes (admin/journal/track/gift-card) work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. "Picked for You" personalized recommendations (`src/components/zariya/sections/picked-for-you.tsx`):
+   - Smart recommendation engine that scores products based on user's wishlist + recently viewed history.
+   - Scoring: same category +3, same collection +2, bestseller +1, featured +1.
+   - Excludes already-wishlisted/viewed products.
+   - Shows 4 top-scored picks. Falls back to bestsellers if no signal (shows "You May Love These" / "Editor's Picks").
+   - When personalised: shows "Picked for You" headline + "Personalised" badge + "Curated for You" eyebrow.
+   - Uses ProductCard for consistent rendering.
+
+2. Currency-aware pricing in ProductCard (`src/components/zariya/product-card.tsx`):
+   - Wired `useCurrency().format` hook.
+   - Product price + compareAt price now display in the user's selected currency (INR ₹ or USD $).
+   - Replaced `formatPrice()` calls with `fmt()` for the visible price displays.
+
+3. Currency-aware pricing in CartDrawer (`src/components/zariya/cart-drawer.tsx`):
+   - Wired `useCurrency().format` hook.
+   - All cart prices now currency-aware: line totals, per-item price, free-shipping remaining, coupon discount, subtotal, discount, total.
+   - 8 `formatPrice()` display calls replaced with `fmt()`.
+   - When user toggles currency in header (INR/USD), the cart updates live.
+
+WIRING:
+- `src/app/page.tsx`: added PickedForYou section after RecentlyViewed → now 23 homepage sections (was 22).
+
+QA VERIFIED (agent-browser):
+- Homepage: all 20 h2 headings render including "You May Love These" (Picked for You fallback). No console errors.
+- Currency toggle: clicked INR button → header now shows "Switch currency, currently USD". Prices on storefront now show "$" (USD). Verified ₹32,500 product shows as $390 (rate 0.012).
+- Cart drawer: after adding item, cart shows USD prices — "$390", "$390 each", "$390" (subtotal/total). Currency conversion working in both ProductCard and CartDrawer.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **23 homepage sections** (was 22), **45 zariya components** (was 44).
+- New **Picked for You** personalized recommendations (scoring-based, with graceful fallback).
+- **Currency-aware pricing** in ProductCard + CartDrawer (INR/USD toggle updates all prices live).
+- Next round opportunities: AR try-on, product video showcase, advanced search filters, wishlist import from URL, live inventory badges throughout, more artisan video content, checkout currency, price-drop alerts.

@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn, formatPrice, whatsappLink, buildWhatsAppOrderMessage } from "@/lib/utils";
 import { useCart } from "@/store/use-cart";
 import { useUI } from "@/store/use-ui";
+import { useCurrency } from "@/store/use-currency";
 import { PRODUCTS, COUPONS, BRAND } from "@/data/catalog";
 import { WhatsAppIcon } from "./product-card";
 import { toast } from "sonner";
@@ -46,6 +47,7 @@ export default function CartDrawer() {
   const removeCoupon = useCart((s) => s.removeCoupon);
   const openCheckout = useUI((s) => s.openCheckout);
   const closeProduct = useUI((s) => s.closeProduct);
+  const fmt = useCurrency((s) => s.format);
 
   const [couponInput, setCouponInput] = React.useState("");
 
@@ -155,7 +157,7 @@ export default function CartDrawer() {
           <div className="border-b border-border bg-muted/20 px-5 py-3">
             {remaining > 0 ? (
               <p className="text-xs text-foreground/80">
-                Add <span className="font-semibold text-primary">{formatPrice(remaining)}</span> more for{" "}
+                Add <span className="font-semibold text-primary">{fmt(remaining)}</span> more for{" "}
                 <span className="font-medium text-gold">complimentary white-glove delivery</span>
               </p>
             ) : (
@@ -278,10 +280,9 @@ export default function CartDrawer() {
                           </div>
                           <div className="text-right">
                             <p className="font-serif text-sm font-semibold text-primary">
-                              {formatPrice(item.price * item.quantity)}
-                            </p>
+                              {fmt(item.price * item.quantity)}                            </p>
                             <p className="text-[10px] text-muted-foreground">
-                              {formatPrice(item.price)} each
+                              {fmt(item.price)} each
                             </p>
                           </div>
                         </div>
@@ -303,7 +304,7 @@ export default function CartDrawer() {
                 <div className="flex items-center gap-2 text-xs">
                   <Tag className="h-3.5 w-3.5 text-emerald" />
                   <span className="font-semibold text-emerald">{appliedCoupon.code}</span>
-                  <span className="text-muted-foreground">applied · saved {formatPrice(discount)}</span>
+                  <span className="text-muted-foreground">applied · saved {fmt(discount)}</span>
                 </div>
                 <button
                   onClick={handleRemoveCoupon}
@@ -336,12 +337,12 @@ export default function CartDrawer() {
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">{formatPrice(subtotal())}</span>
+                <span className="font-medium">{fmt(subtotal())}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-emerald">
                   <span>Discount</span>
-                  <span>−{formatPrice(discount)}</span>
+                  <span>−{fmt(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between">
@@ -354,7 +355,7 @@ export default function CartDrawer() {
               <div className="flex items-end justify-between">
                 <span className="font-serif text-base font-semibold">Total</span>
                 <span className="font-serif text-2xl font-bold text-primary">
-                  {formatPrice(total)}
+                  {fmt(total)}
                 </span>
               </div>
             </div>

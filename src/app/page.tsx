@@ -16,6 +16,7 @@ const ReferAndEarn = dynamic(() => import("@/components/zariya/sections/refer-an
 const Sustainability = dynamic(() => import("@/components/zariya/sections/sustainability").then((m) => m.Sustainability));
 const ArtisanStory = dynamic(() => import("@/components/zariya/sections/artisan-story"));
 const JournalTeaser = dynamic(() => import("@/components/zariya/sections/journal-teaser").then((m) => m.JournalTeaser));
+const PickedForYou = dynamic(() => import("@/components/zariya/sections/picked-for-you").then((m) => m.PickedForYou));
 const RecentlyViewed = dynamic(() => import("@/components/zariya/sections/recently-viewed").then((m) => m.RecentlyViewed));
 const Testimonials = dynamic(() => import("@/components/zariya/sections/testimonials"));
 const InstagramGallery = dynamic(() => import("@/components/zariya/sections/instagram-gallery"));
@@ -48,6 +49,7 @@ export default function Home() {
       <AboutBrand />
       <JournalTeaser />
       <RecentlyViewed />
+      <PickedForYou />
       <Testimonials />
       <InstagramGallery />
       <FAQs />
