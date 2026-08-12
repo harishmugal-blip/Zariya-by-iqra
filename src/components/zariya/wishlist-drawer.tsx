@@ -8,6 +8,9 @@ import {
   ShoppingBag,
   Trash2,
   ArrowRight,
+  Share2,
+  Check,
+  Link as LinkIcon,
 } from "lucide-react";
 import {
   Sheet,
@@ -17,13 +20,14 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, whatsappLink } from "@/lib/utils";
 import { useWishlist } from "@/store/use-wishlist";
 import { useCart } from "@/store/use-cart";
 import { useUI } from "@/store/use-ui";
-import { PRODUCTS } from "@/data/catalog";
+import { PRODUCTS, BRAND } from "@/data/catalog";
 import type { Product } from "@/lib/types";
 import { Stars } from "./stars";
+import { WhatsAppIcon } from "./product-card";
 import { toast } from "sonner";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -36,11 +40,29 @@ export default function WishlistDrawer() {
   const addItem = useCart((s) => s.addItem);
   const openCart = useCart((s) => s.openCart);
   const openProduct = useUI((s) => s.openProduct);
+  const [copied, setCopied] = React.useState(false);
 
   const items: Product[] = React.useMemo(
     () => ids.map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean) as Product[],
     [ids]
   );
+
+  const handleShareLink = () => {
+    const slugs = items.map((p) => p.slug).join(",");
+    const url = `${window.location.origin}/?wishlist=${slugs}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    toast.success("Wishlist link copied", {
+      description: "Share it with anyone you love.",
+    });
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleShareWhatsApp = () => {
+    const lines = items.map((p, i) => `${i + 1}. ${p.name} — ${formatPrice(p.price)}`).join("\n");
+    const msg = `*My ZARIYA Wishlist*\n\n${lines}\n\nWhich one do you think is me? ✨`;
+    window.open(whatsappLink(BRAND.whatsapp, msg), "_blank");
+  };
 
   const handleAddToBag = (p: Product) => {
     addItem(p, {
@@ -218,6 +240,33 @@ export default function WishlistDrawer() {
               </span>
             </div>
             <Separator />
+            {/* Share row */}
+            <div className="flex gap-2">
+              <Button
+                onClick={handleShareLink}
+                variant="outline"
+                size="sm"
+                className="flex-1 rounded-full border-border text-xs font-semibold hover:border-gold hover:text-gold"
+              >
+                {copied ? (
+                  <>
+                    <Check className="mr-1.5 h-3.5 w-3.5 text-emerald" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <LinkIcon className="mr-1.5 h-3.5 w-3.5" /> Copy Link
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={handleShareWhatsApp}
+                variant="outline"
+                size="sm"
+                className="flex-1 rounded-full border-emerald/30 text-xs font-semibold text-emerald hover:bg-emerald/5"
+              >
+                <WhatsAppIcon className="mr-1.5 h-3.5 w-3.5" /> Share
+              </Button>
+            </div>
             <Button
               onClick={handleMoveAll}
               size="lg"

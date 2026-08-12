@@ -227,6 +227,26 @@
   100% { background-position: -200% 0; }
 }
 
+@keyframes price-shine {
+  0%, 92% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.price-shimmer {
+  background: linear-gradient(
+    100deg,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--foreground)) 40%,
+    hsl(38 51% 56%) 50%,
+    hsl(var(--foreground)) 60%,
+    hsl(var(--foreground)) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: price-shine 4s ease-in-out infinite;
+}
+
 @keyframes float-slow {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-18px) rotate(3deg); }

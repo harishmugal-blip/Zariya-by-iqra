@@ -13,6 +13,8 @@ const GiftCards = dynamic(() => import("@/components/zariya/sections/gift-cards"
 const ZariyaCircle = dynamic(() => import("@/components/zariya/sections/zariya-circle").then((m) => m.ZariyaCircle));
 const Sustainability = dynamic(() => import("@/components/zariya/sections/sustainability").then((m) => m.Sustainability));
 const ArtisanStory = dynamic(() => import("@/components/zariya/sections/artisan-story"));
+const JournalTeaser = dynamic(() => import("@/components/zariya/sections/journal-teaser").then((m) => m.JournalTeaser));
+const RecentlyViewed = dynamic(() => import("@/components/zariya/sections/recently-viewed").then((m) => m.RecentlyViewed));
 const Testimonials = dynamic(() => import("@/components/zariya/sections/testimonials"));
 const InstagramGallery = dynamic(() => import("@/components/zariya/sections/instagram-gallery"));
 const Newsletter = dynamic(() => import("@/components/zariya/sections/newsletter"));
@@ -38,6 +40,8 @@ export default function Home() {
       <OrnamentalDivider variant="simple" />
       <ArtisanStory />
       <AboutBrand />
+      <JournalTeaser />
+      <RecentlyViewed />
       <Testimonials />
       <InstagramGallery />
       <FAQs />

@@ -235,7 +235,7 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
 
         {/* Price */}
         <div className="mt-auto flex items-end gap-2 pt-4">
-          <span className="font-serif text-xl font-bold text-foreground">
+          <span className="price-shimmer font-serif text-xl font-bold">
             {formatPrice(product.price)}
           </span>
           {product.compareAtPrice && (

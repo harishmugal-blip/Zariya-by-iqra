@@ -155,3 +155,19 @@ export interface PackagingFeature {
   description: string;
   icon: string;
 }
+
+export interface JournalArticle {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: "Heritage" | "Craft" | "Style" | "Journal" | "People";
+  author: string;
+  authorRole: string;
+  date: string;
+  readTime: string;
+  image: string;
+  featured: boolean;
+  body: string[];
+  productSlugs?: string[];
+}

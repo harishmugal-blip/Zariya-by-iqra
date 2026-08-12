@@ -488,3 +488,65 @@ Stage Summary:
 - **Ornamental dividers** between key homepage sections for couture editorial feel.
 - 3 new API routes (orders/track) + 1 new page (/track).
 - Next round opportunities: blog/editorial stories, AR try-on, wishlist sharing, advanced search filters, product quick-add variants, gift card balance check, referral program, more artisan imagery.
+
+---
+Task ID: 16
+Agent: Main (Z.ai Code) — Cron Review Round 4
+Task: QA the live site, add Editorial Journal (blog), Recently Viewed section, Wishlist Sharing, price shimmer styling
+
+Work Log:
+- Reviewed worklog — project stable with 17 homepage sections, admin dashboard, order tracking, comparison, live chat, loyalty, gift cards, sustainability, currency switcher from Rounds 1-3.
+- agent-browser QA: verified all 17 sections render, product/admin/track flows work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Editorial Journal (blog) — 3 new files:
+   - `src/data/catalog.ts`: added `JOURNAL_ARTICLES` (6 rich editorial articles: "The Art of Aari", "Pashmina: The Whisper of Kashmir", "How to Style a Pheran: Three Ways", "The Women Behind the Thread", "Caring for Your Heirloom", "The Colours of Kashmir"). Each with title, excerpt, category (Heritage/Craft/Style/People), author, authorRole, date, readTime, image, body (4 multi-paragraph essays), related product slugs.
+   - `src/lib/types.ts`: added `JournalArticle` type.
+   - `src/app/journal/page.tsx`: Journal landing page — burgundy hero ("Stories from the Atelier"), featured article card (image + overlay + read CTA), category filter pills (All/Heritage/Craft/Style/People/Journal), search input, 3-column article grid with hover zoom + category badges + author + read time.
+   - `src/app/journal/[slug]/page.tsx`: Individual article page — full-bleed hero image with gradient overlay, category badge, title, author/role/read-time/date, share button (Web Share API + clipboard fallback with copied state), drop-cap first paragraph, full body paragraphs (fade-up on scroll), "Discuss on WhatsApp" CTA, "Pieces from this story" related products grid (clickable → opens product detail), "More from {category}" related articles.
+
+2. Journal Teaser homepage section (`src/components/zariya/sections/journal-teaser.tsx`):
+   - "The Journal" eyebrow + "Stories from the Atelier" headline + "All Stories" link to /journal.
+   - Split layout: large featured article (image with overlay, category, title, excerpt, read CTA) + 3 stacked compact article cards (thumbnail + category + readTime + title + author).
+   - Hover effects: image zoom, title color shift, arrow translate.
+   - Added to homepage after AboutBrand, before RecentlyViewed.
+
+3. Recently Viewed Products section (`src/components/zariya/sections/recently-viewed.tsx`):
+   - Reads `useUI().recentlyViewed` slugs → maps to PRODUCTS → renders ProductCards.
+   - Conditional render (returns null if empty) — only appears after user browses products.
+   - Clock icon + "Recently Viewed" heading + piece count.
+   - 4-column grid (2 on mobile). Bordered section with subtle card background.
+   - Added to homepage after JournalTeaser.
+
+4. Wishlist Sharing (`src/components/zariya/wishlist-drawer.tsx`):
+   - "Copy Link" button — generates shareable URL `/?wishlist=slug1,slug2,...`, copies to clipboard, shows "Copied" with emerald check for 2.5s, sonner toast.
+   - "Share" button (emerald) — opens WhatsApp with pre-formatted wishlist message (product list with prices + "Which one do you think is me? ✨").
+   - Both buttons in a 2-column row in the wishlist drawer footer, before "Move All to Bag".
+
+5. Price shimmer styling (`src/app/globals.css` + `product-card.tsx`):
+   - New `price-shimmer` utility — text gradient that sweeps a gold highlight across the price every 4s (subtle, premium micro-interaction).
+   - Applied to ProductCard price (replaces solid text-foreground).
+   - New `price-shine` keyframe animation.
+
+WIRING:
+- `src/app/page.tsx`: added JournalTeaser + RecentlyViewed sections → now 19 homepage sections (was 17).
+- `src/components/zariya/footer.tsx`: added "The Journal" link to About column.
+- `src/components/zariya/product-card.tsx`: applied price-shimmer to price.
+
+QA VERIFIED (agent-browser):
+- Homepage: all 19 sections render (added "Stories from the Atelier" Journal teaser + Recently Viewed). Price shimmer animation active on product cards.
+- `/journal` page: "Stories from the Atelier" h1, Featured article card, all 4 categories (Heritage/Craft/Style/People) in filter pills, article grid renders.
+- Article page `/journal/[slug]`: "The Art of Aari: 150 Hours to a Single Pheran" h1, 14 body paragraphs, Share button present, related products + related articles sections.
+- 0 console errors, 0 runtime errors. Lint: 0 errors, 0 warnings.
+- Recently Viewed correctly hidden until a product is opened (conditional render verified).
+- NOTE: Dev server required restarts during QA (sandbox kills background processes between shell commands). All features verified working within consolidated commands.
+
+Stage Summary:
+- Project now has **19 homepage sections** (was 17), **40 zariya components** (was 38), **5 app pages** (was 3: added /journal + /journal/[slug]).
+- New **Editorial Journal** with 6 full-length articles, category filtering, search, share, and related products.
+- **Recently Viewed** section surfaces browsed products (conditional).
+- **Wishlist Sharing** via copy-link + WhatsApp.
+- **Price shimmer** micro-interaction on all product cards.
+- Next round opportunities: AR try-on, gift card balance check, referral program, product quick-add variants, advanced search filters, live inventory badges, more artisan video content, personalized recommendations.

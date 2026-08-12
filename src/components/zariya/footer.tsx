@@ -35,6 +35,7 @@ const SHOP_LINKS = [
 const ABOUT_LINKS = [
   { label: "Our Heritage", href: "/story" },
   { label: "Artisan Stories", href: "/artisans" },
+  { label: "The Journal", href: "/journal" },
   { label: "Celebrity Collection", href: "/shop?collection=royal-heritage" },
   { label: "Luxury Packaging", href: "/packaging" },
   { label: "Sustainability", href: "/sustainability" },
