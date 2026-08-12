@@ -9,8 +9,10 @@ const LuxuryCollection = dynamic(() => import("@/components/zariya/sections/luxu
 const LimitedEdition = dynamic(() => import("@/components/zariya/sections/limited-edition"));
 const CelebrityCollection = dynamic(() => import("@/components/zariya/sections/celebrity-collection").then((m) => m.CelebrityCollection));
 const LuxuryPackaging = dynamic(() => import("@/components/zariya/sections/luxury-packaging").then((m) => m.LuxuryPackaging));
+const Lookbook = dynamic(() => import("@/components/zariya/sections/lookbook").then((m) => m.Lookbook));
 const GiftCards = dynamic(() => import("@/components/zariya/sections/gift-cards").then((m) => m.GiftCards));
 const ZariyaCircle = dynamic(() => import("@/components/zariya/sections/zariya-circle").then((m) => m.ZariyaCircle));
+const ReferAndEarn = dynamic(() => import("@/components/zariya/sections/refer-and-earn").then((m) => m.ReferAndEarn));
 const Sustainability = dynamic(() => import("@/components/zariya/sections/sustainability").then((m) => m.Sustainability));
 const ArtisanStory = dynamic(() => import("@/components/zariya/sections/artisan-story"));
 const JournalTeaser = dynamic(() => import("@/components/zariya/sections/journal-teaser").then((m) => m.JournalTeaser));
@@ -34,8 +36,10 @@ export default function Home() {
       <LimitedEdition />
       <CelebrityCollection />
       <LuxuryPackaging />
+      <Lookbook />
       <GiftCards />
       <ZariyaCircle />
+      <ReferAndEarn />
       <Sustainability />
       <OrnamentalDivider variant="simple" />
       <ArtisanStory />

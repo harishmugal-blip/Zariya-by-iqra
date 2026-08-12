@@ -122,6 +122,11 @@ export default function ProductDetail() {
     .map((slug) => PRODUCTS.find((p) => p.slug === slug))
     .filter(Boolean)
     .slice(0, 8) as Product[];
+  // Complete the Look — complementary pieces from OTHER categories
+  const complementary = PRODUCTS.filter(
+    (p) => p.category !== product.category && p.slug !== product.slug && p.featured
+  ).slice(0, 4);
+  const completeLookTotal = complementary.reduce((s, p) => s + p.price, 0) + product.price;
   const faqs = FAQS.slice(0, 4);
 
   // Star breakdown (mock distribution based on rating)
@@ -661,6 +666,50 @@ export default function ProductDetail() {
                 ))}
               </Accordion>
             </section>
+
+            {/* Complete the Look — cross-sell complementary pieces */}
+            {complementary.length > 0 && (
+              <section className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-serif text-xl font-semibold">Complete the Look</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Curated pieces that pair beautifully with your {product.name}.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Look Total</p>
+                    <p className="font-serif text-lg font-bold text-primary">
+                      {formatPrice(completeLookTotal)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 overflow-x-auto scrollbar-lux pb-3 -mx-1 px-1">
+                  {complementary.map((p, i) => (
+                    <div key={p.id} className="w-56 shrink-0">
+                      <ProductCard product={p} index={i} />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    complementary.forEach((p) =>
+                      addItem(p, {
+                        color: p.colors[0]?.name || "",
+                        size: p.sizes[0] || "",
+                        quantity: 1,
+                      })
+                    );
+                    toast.success("Look added to bag", {
+                      description: `${complementary.length + 1} pieces · ${formatPrice(completeLookTotal)}`,
+                    });
+                  }}
+                  className="mt-1 w-full rounded-full border border-gold/40 bg-gold/5 py-3 text-xs font-semibold uppercase tracking-wide text-primary transition-all hover:bg-gold hover:text-primary-foreground"
+                >
+                  Add the Complete Look ({complementary.length + 1} pieces)
+                </button>
+              </section>
+            )}
 
             {/* Related products */}
             {related.length > 0 && (

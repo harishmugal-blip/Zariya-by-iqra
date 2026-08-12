@@ -550,3 +550,60 @@ Stage Summary:
 - **Wishlist Sharing** via copy-link + WhatsApp.
 - **Price shimmer** micro-interaction on all product cards.
 - Next round opportunities: AR try-on, gift card balance check, referral program, product quick-add variants, advanced search filters, live inventory badges, more artisan video content, personalized recommendations.
+
+---
+Task ID: 17
+Agent: Main (Z.ai Code) — Cron Review Round 5
+Task: QA the live site, add Complete the Look cross-sell, Refer & Earn, Lookbook section, SectionHeader styling polish
+
+Work Log:
+- Reviewed worklog — project stable with 19 homepage sections, admin, journal, order tracking, comparison, live chat, loyalty, gift cards, sustainability, currency switcher from Rounds 1-4.
+- agent-browser QA: verified all sections render, admin/journal/track routes work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. "Complete the Look" cross-sell (`src/components/zariya/product-detail.tsx`):
+   - New section in product detail modal that suggests 4 complementary pieces from OTHER categories (e.g., viewing a pheran → suggests shawls, suits, kaftans).
+   - Shows "Look Total" (sum of current product + complementary pieces).
+   - "Add the Complete Look (N pieces)" button — adds all complementary pieces to cart in one click with consolidated toast.
+   - Positioned before "You May Also Love" (related products) section.
+   - Horizontal scroll of ProductCards (w-56 each).
+
+2. Refer & Earn section (`src/components/zariya/sections/refer-and-earn.tsx`):
+   - "Share the Heritage. Earn the Rewards." headline with gold-text accent.
+   - Auto-generated unique referral code (e.g., "NOOR247") in a gold-gradient card with Copy + WhatsApp share buttons.
+   - 3-step "How it works" guide (Share Your Code → They Shop → You Earn) with numbered gold badges.
+   - 4-perk grid (₹2,000 per friend, Unlimited referrals, 12-month credit validity, ₹2,000 friend discount).
+   - Burgundy testimonial card from "Ayesha K., Begum Tier".
+   - WhatsApp share pre-fills message with code + shop link.
+
+3. Lookbook editorial section (`src/components/zariya/sections/lookbook.tsx`):
+   - "A Visual Diary" — magazine-style photo grid on burgundy background.
+   - 6 looks with mixed sizes (tall/wide/square) in a 4-column masonry layout.
+   - Each look: image with hover zoom, category badge (glass-gold), arrow button on hover, title + subtitle overlay.
+   - Clicking any look opens the related product detail.
+   - Decorative gold/champagne blur orbs.
+   - Footer note: "Photographed in Srinagar, Kashmir".
+
+4. SectionHeader styling component (`src/components/zariya/section-header.tsx`):
+   - Reusable luxury header with optional ornamental index number (italic gold), gold eyebrow, Playfair title, subtitle.
+   - Center or left aligned. Available for future section refactoring.
+
+WIRING:
+- `src/app/page.tsx`: added Lookbook (after LuxuryPackaging) + ReferAndEarn (after ZariyaCircle) → now 21 homepage sections (was 19).
+- `src/components/zariya/product-detail.tsx`: added Complete the Look section with complementary products + add-all-to-bag.
+
+QA VERIFIED (agent-browser):
+- Homepage: all 21 sections render (added "A Visual Diary" Lookbook + "Share the Heritage. Earn the Rewards." Refer & Earn). No console errors.
+- Product detail: "Complete the Look" section present with "Add the Complete Look" button + "Look Total" — verified by scrolling modal to bottom.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+- Full-page screenshot captured.
+
+Stage Summary:
+- Project now has **21 homepage sections** (was 19), **42 zariya components** (was 40).
+- New **Complete the Look** cross-sell in product detail (increases AOV with one-click bundle).
+- **Refer & Earn** program with unique code generation + WhatsApp sharing.
+- **Lookbook** magazine-style editorial photo grid.
+- Reusable **SectionHeader** component for styling consistency.
+- Next round opportunities: AR try-on, gift card balance check, personalized recommendations, live inventory badges, product video showcase, advanced search filters, wishlist import from URL, more artisan video content.
