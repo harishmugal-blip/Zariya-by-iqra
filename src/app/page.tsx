@@ -8,6 +8,8 @@ const LuxuryCollection = dynamic(() => import("@/components/zariya/sections/luxu
 const LimitedEdition = dynamic(() => import("@/components/zariya/sections/limited-edition"));
 const CelebrityCollection = dynamic(() => import("@/components/zariya/sections/celebrity-collection").then((m) => m.CelebrityCollection));
 const LuxuryPackaging = dynamic(() => import("@/components/zariya/sections/luxury-packaging").then((m) => m.LuxuryPackaging));
+const GiftCards = dynamic(() => import("@/components/zariya/sections/gift-cards").then((m) => m.GiftCards));
+const ZariyaCircle = dynamic(() => import("@/components/zariya/sections/zariya-circle").then((m) => m.ZariyaCircle));
 const ArtisanStory = dynamic(() => import("@/components/zariya/sections/artisan-story"));
 const Testimonials = dynamic(() => import("@/components/zariya/sections/testimonials"));
 const InstagramGallery = dynamic(() => import("@/components/zariya/sections/instagram-gallery"));
@@ -26,6 +28,8 @@ export default function Home() {
       <LimitedEdition />
       <CelebrityCollection />
       <LuxuryPackaging />
+      <GiftCards />
+      <ZariyaCircle />
       <ArtisanStory />
       <AboutBrand />
       <Testimonials />

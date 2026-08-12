@@ -7,6 +7,7 @@ import { Footer } from "./footer";
 import { MobileBottomNav } from "./mobile-bottom-nav";
 import { WhatsAppFab } from "./whatsapp-fab";
 import { MicroInteractions } from "./micro-interactions";
+import { LiveChat } from "./live-chat";
 
 // Overlays — load lazily for fast initial paint
 const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
@@ -28,6 +29,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Footer />
       <MobileBottomNav />
       <WhatsAppFab />
+      <LiveChat />
       {/* Global overlays */}
       <QuickView />
       <ProductDetail />

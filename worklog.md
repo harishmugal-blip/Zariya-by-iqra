@@ -342,3 +342,74 @@ Stage Summary:
 - Celebrity social proof section + luxury packaging unboxing showcase.
 - All flows remain functional; no regressions.
 - Next round opportunities: admin dashboard route, product comparison, gift cards, loyalty/rewards program, live chat concierge, AR try-on preview, more product imagery.
+
+---
+Task ID: 14
+Agent: Main (Z.ai Code) — Cron Review Round 2
+Task: QA the live site, add Admin Dashboard, Gift Cards, Zariya Circle loyalty, Live Chat concierge, ornamental dividers
+
+Work Log:
+- Reviewed worklog — project stable with 14 homepage sections + 8 overlays + micro-interactions from Round 1.
+- agent-browser QA: verified all sections render, cart/checkout/search/wishlist flows work, no console errors.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Admin Dashboard (`/admin` route — `src/app/admin/page.tsx`):
+   - Luxury dark admin console (deep burgundy-tinted dark bg, gold accents).
+   - 6 tabs: Overview, Orders, Products, Reviews, Subscribers, Coupons.
+   - **Overview**: 4 KPI cards (Total Revenue, Orders, Subscribers, Avg Order Value), 7-day revenue bar chart (animated), order status breakdown, payment method breakdown (COD/Online), catalog-by-category grid.
+   - **Orders**: searchable/filterable order list (by order#, name, email + status filter pills), each order shows orderNumber, customer, items count, total, payment method, timestamp, and a live status dropdown (PENDING/CONFIRMED/SHIPPED/DELIVERED/CANCELLED) that PATCHes `/api/admin/orders`.
+   - **Products**: all 12 products in cards with image, category, name, price, stock, rating, badges.
+   - **Reviews**: 30 catalog reviews with star ratings, verified badges, approve buttons.
+   - **Subscribers**: newsletter subscribers table (email, name, joined date).
+   - **Coupons**: 3 active coupons in gold-gradient cards with code, discount, min order.
+   - "Storefront" link to return to `/`, animated entrances (framer-motion).
+   - Discreet "Atelier Console" link added to footer bottom bar.
+
+2. Admin APIs (4 new routes):
+   - `GET /api/admin/stats` — revenue, order counts, 7-day revenue series, category stats, payment breakdown, subscriber/contact/enquiry counts.
+   - `GET /api/admin/orders` — all orders with parsed items. `PATCH` — update order status.
+   - `GET /api/admin/newsletter` — subscriber list.
+   - `GET /api/admin/reviews` — catalog reviews (optional `?productSlug` filter).
+
+3. Gift Cards section (`src/components/zariya/sections/gift-cards.tsx`):
+   - Interactive 3D-tilt gift card visual (burgundy gradient with gold motifs, live amount display).
+   - 4 denomination buttons (₹10k/₹25k/₹50k/₹1L) with "Popular" badge on ₹25k + custom amount input.
+   - "How it works" 3-step guide, floating Sparkles badge, purchase toast.
+   - Amount animates on change.
+
+4. Zariya Circle Loyalty section (`src/components/zariya/sections/zariya-circle.tsx`):
+   - 3-tier membership: Sahiba (free) / Begum (₹1L+, featured "Most Loved") / Maharani (₹5L+).
+   - Each tier: icon (Sparkles/Gem/Crown), tagline, spend threshold, benefit checklist, CTA button.
+   - Featured tier elevated with gold gradient + lift on hover.
+
+5. Live Chat Concierge (`src/components/zariya/live-chat.tsx`):
+   - Floating chat launcher (bottom-left, primary burgundy) with pulse ring + unread badge.
+   - Chat panel (480px tall): gold-accented header with online indicator, message thread, 4 quick-reply buttons, WhatsApp escalation bar, message input.
+   - Bot responds to quick replies with curated luxury copy (size help, pashmina care, order tracking, gift wrapping).
+   - Smooth open/close animations (framer-motion AnimatePresence).
+
+6. Ornamental Divider (`src/components/zariya/ornamental-divider.tsx`):
+   - Reusable luxury gold divider with 3 variants (diamond/lotus/simple) — animated tapering gold lines + centered SVG motif. Available for editorial section breaks.
+
+WIRING:
+- `src/app/page.tsx`: added GiftCards + ZariyaCircle sections (after LuxuryPackaging, before ArtisanStory) → now 16 homepage sections.
+- `src/components/zariya/site-chrome.tsx`: added `<LiveChat />` to global chrome.
+- `src/components/zariya/footer.tsx`: added discreet "Atelier Console" `/admin` link in bottom bar.
+
+QA VERIFIED (agent-browser):
+- Storefront: all 16 sections render (added Gift Cards + Zariya Circle). Live Chat launcher visible, opens panel, welcome message + quick replies present, bot responds to "Help me choose a size" with size guidance.
+- Admin `/admin`: Overview loads with real KPIs (1 order, 3 subscribers, ₹43,650 revenue, 7-day chart, category stats). Orders tab shows real order ZRY-20260812-8JFR15, status dropdown updates order to CONFIRMED via PATCH API. Products tab shows 12 products. Coupons tab shows ZARIYA10/HERITAGE15/WELCOME2000. Subscribers tab shows 3 subscribers.
+- 0 console errors, 0 runtime errors on both routes.
+- All 4 admin APIs return 200. Storefront + admin routes return 200.
+- Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **16 homepage sections** (was 14), **9 global overlays/widgets** (was 8, +LiveChat), **35 zariya components** (was 31).
+- Full **admin dashboard** at `/admin` with real Prisma-backed analytics + order management.
+- New revenue features: **Gift Cards** (denominations + custom) + **Zariya Circle** 3-tier loyalty program.
+- **Live Chat concierge** with quick-reply bot + WhatsApp escalation.
+- Reusable **ornamental divider** for couture section breaks.
+- Discreet admin access via footer "Atelier Console" link.
+- Next round opportunities: product comparison tool, AR try-on preview, wishlist sharing, order tracking page, blog/editorial stories, currency switcher, advanced search filters, more product imagery, sustainability section.

@@ -271,6 +271,12 @@ export function Footer() {
               </span>
             ))}
           </div>
+          <a
+            href="/admin"
+            className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/40 transition-colors hover:text-gold"
+          >
+            Atelier Console
+          </a>
         </div>
       </div>
     </footer>
