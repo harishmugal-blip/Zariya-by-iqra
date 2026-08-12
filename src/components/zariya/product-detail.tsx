@@ -47,6 +47,7 @@ import { PRODUCTS, FAQS, BRAND } from "@/data/catalog";
 import type { Product } from "@/lib/types";
 import { Stars } from "./stars";
 import { ProductCard, WhatsAppIcon } from "./product-card";
+import { NotifyMe } from "./notify-me";
 import { toast } from "sonner";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -485,7 +486,7 @@ export default function ProductDetail() {
                 <Button
                   onClick={() => handleAdd(true)}
                   size="lg"
-                  className="h-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+                  className="btn-shimmer h-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
                 >
                   <ShoppingBag className="mr-2 h-4 w-4" />
                   Add to Bag
@@ -517,6 +518,26 @@ export default function ProductDetail() {
                   </Button>
                 </div>
               </div>
+            </div>
+
+            {/* Notify me row — price drop + back in stock */}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <NotifyMe
+                productSlug={product.slug}
+                productName={product.name}
+                type="PRICE_DROP"
+                currentPrice={product.price}
+                className="text-[10px]"
+              />
+              {product.stock <= 5 && (
+                <NotifyMe
+                  productSlug={product.slug}
+                  productName={product.name}
+                  type="BACK_IN_STOCK"
+                  stock={product.stock}
+                  className="text-[10px]"
+                />
+              )}
             </div>
 
             {/* SKU + category + fabric tags */}

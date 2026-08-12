@@ -706,3 +706,42 @@ Stage Summary:
 - New **Picked for You** personalized recommendations (scoring-based, with graceful fallback).
 - **Currency-aware pricing** in ProductCard + CartDrawer (INR/USD toggle updates all prices live).
 - Next round opportunities: AR try-on, product video showcase, advanced search filters, wishlist import from URL, live inventory badges throughout, more artisan video content, checkout currency, price-drop alerts.
+
+---
+Task ID: 20
+Agent: Main (Z.ai Code) — Cron Review Round 8
+Task: QA the live site, add Notify Me (price-drop/back-in-stock alerts), CTA shimmer + skeleton styling polish
+
+Work Log:
+- Reviewed worklog — project stable with 23 homepage sections, admin, journal, order tracking, comparison, live chat, loyalty, gift cards, referral, lookbook, gift card balance, trust badges, stock urgency, picked-for-you, currency-aware pricing from Rounds 1-7.
+- agent-browser QA: verified all sections render, all routes work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Notify Me — price-drop & back-in-stock alerts:
+   - `src/app/api/notify-me/route.ts` — POST endpoint for alert subscriptions. Validates email + type. In-memory store with duplicate detection (returns "already on the list"). GET for listing subscriptions (optional productSlug filter).
+   - `src/components/zariya/notify-me.tsx` — reusable component with 3 states: idle button ("Notify Me on Sale" / "Notify Me When Available"), expandable form (email + optional WhatsApp number, gold-bordered card), success state (emerald checkmark + "You're on the list" + dismiss). AnimatePresence transitions. Posts to /api/notify-me.
+   - Wired into `src/components/zariya/product-detail.tsx`:
+     - "Notify Me on Sale" (PRICE_DROP) button always shown below the sticky action bar.
+     - "Notify Me When Available" (BACK_IN_STOCK) button shown conditionally when stock ≤ 5.
+     - Both compact (text-[10px]) in a flex-wrap row.
+
+2. Styling polish — `src/app/globals.css`:
+   - `.btn-shimmer` — shimmer sweep effect on hover for primary CTA buttons. A diagonal white gradient sweeps across the button on hover (0.7s ease). Applied to the "Add to Bag" button in product detail.
+   - `.skeleton-lux` — luxury skeleton loader utility with shimmer animation (1.6s ease-in-out infinite). Available for future loading states.
+   - `@keyframes skeleton-shimmer` keyframe.
+
+QA VERIFIED (agent-browser + curl):
+- Product detail modal: "Notify Me on Sale" text present (verified via eval).
+- NotifyMe API (curl):
+  - POST valid → `{"success":true,"message":"We'll notify you the instant this piece goes on sale.","id":"sub-..."}`
+  - POST duplicate → `{"success":true,"message":"You're already on the list...","alreadySubscribed":true}`
+  - POST invalid email → `{"error":"Please enter a valid email address."}` (400)
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **23 homepage sections**, **46 zariya components** (was 45), **16 API routes** (was 15: added /api/notify-me).
+- New **Notify Me** feature — price-drop + back-in-stock alert subscriptions with dedicated API + reusable component.
+- **CTA shimmer** polish on Add to Bag button + **skeleton loader** utility for future use.
+- Next round opportunities: AR try-on, product video showcase, advanced search filters, wishlist import from URL, live inventory badges throughout, price-drop email integration, more artisan video content.
