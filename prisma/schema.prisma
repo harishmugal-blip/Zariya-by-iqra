@@ -1,0 +1,60 @@
+// Prisma schema for ZARIYA by IQRA luxury store
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  customerName  String
+  email         String
+  phone         String
+  address       String
+  city          String
+  state          String
+  pincode       String
+  country       String      @default("India")
+  notes         String?
+  itemsJson     String      // JSON-serialised cart items
+  subtotal      Int
+  discount      Int         @default(0)
+  shipping      Int         @default(0)
+  total         Int
+  couponCode    String?
+  paymentMethod String      @default("COD")
+  status        String      @default("PENDING")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model ProductEnquiry {
+  id        String   @id @default(cuid())
+  productSlug String
+  customerName String
+  phone     String
+  message   String
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,36 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { AnnouncementBar } from "./announcement-bar";
+import { Header } from "./header";
+import { Footer } from "./footer";
+import { MobileBottomNav } from "./mobile-bottom-nav";
+import { WhatsAppFab } from "./whatsapp-fab";
+
+// Overlays — load lazily for fast initial paint
+const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
+const ProductDetail = dynamic(() => import("./product-detail"), { ssr: false });
+const CartDrawer = dynamic(() => import("./cart-drawer"), { ssr: false });
+const SearchOverlay = dynamic(() => import("./search-overlay"), { ssr: false });
+const WishlistDrawer = dynamic(() => import("./wishlist-drawer"), { ssr: false });
+const CheckoutModal = dynamic(() => import("./checkout-modal"), { ssr: false });
+
+export function SiteChrome({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex min-h-screen flex-col bg-background">
+      <AnnouncementBar />
+      <Header />
+      <div className="flex-1">{children}</div>
+      <Footer />
+      <MobileBottomNav />
+      <WhatsAppFab />
+      {/* Global overlays */}
+      <QuickView />
+      <ProductDetail />
+      <CartDrawer />
+      <SearchOverlay />
+      <WishlistDrawer />
+      <CheckoutModal />
+    </div>
+  );
+}
