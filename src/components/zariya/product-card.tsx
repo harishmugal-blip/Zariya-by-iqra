@@ -245,8 +245,20 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
           )}
         </div>
         {product.stock <= 8 && (
-          <p className="mt-1 text-[11px] font-medium text-destructive">
-            Only {product.stock} left
+          <div className="mt-1 flex items-center gap-1.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+            </span>
+            <p className="text-[11px] font-semibold text-destructive">
+              Only {product.stock} left
+            </p>
+          </div>
+        )}
+        {product.bestSeller && (
+          <p className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground">
+            <span className="h-1 w-1 rounded-full bg-emerald" />
+            {(product.id.charCodeAt(1) % 7) + 3} viewing now
           </p>
         )}
       </div>

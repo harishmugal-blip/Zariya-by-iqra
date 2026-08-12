@@ -607,3 +607,56 @@ Stage Summary:
 - **Lookbook** magazine-style editorial photo grid.
 - Reusable **SectionHeader** component for styling consistency.
 - Next round opportunities: AR try-on, gift card balance check, personalized recommendations, live inventory badges, product video showcase, advanced search filters, wishlist import from URL, more artisan video content.
+
+---
+Task ID: 18
+Agent: Main (Z.ai Code) — Cron Review Round 6
+Task: QA the live site, add stock urgency micro-interactions, Trust Badges bar, Gift Card balance check page
+
+Work Log:
+- Reviewed worklog — project stable with 21 homepage sections, admin, journal, order tracking, comparison, live chat, loyalty, gift cards, referral, lookbook, complete-the-look from Rounds 1-5.
+- agent-browser QA: verified all sections render, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Stock urgency + social proof micro-interactions (`src/components/zariya/product-card.tsx`):
+   - "Only X left" now has a pulsing red dot (animate-ping) for live urgency.
+   - New "X viewing now" indicator on bestseller cards (deterministic count from product id, emerald dot) — social proof that drives conversion.
+   - Both appear below the price on qualifying products.
+
+2. Trust Badges bar (`src/components/zariya/sections/trust-badges.tsx`):
+   - Premium 6-badge strip directly below hero: Authenticity Guaranteed, White-Glove Delivery, 7-Day Easy Returns, Secure Checkout, Handcrafted in Kashmir, Lifetime Repair.
+   - Each badge: icon in a circle that fills burgundy on hover, title + description.
+   - Divided grid (2 cols mobile, 3 sm, 6 lg) with border separators.
+   - Added to homepage right after Hero (before Categories).
+
+3. Gift Card balance check page (`/gift-card` route — `src/app/gift-card/page.tsx`):
+   - Luxury burgundy hero "Check Your Balance" with back-to-storefront link.
+   - Code lookup form (uppercase input, ZRY-GC-XXXXX placeholder).
+   - 3 demo codes shown as clickable links (ZRY-GC-10001, ZRY-GC-25001, ZRY-GC-50001).
+   - Result card: burgundy gradient header with code + status badge (Active/Redeemed/Expired), large gold balance display, detail rows (Initial Value, Redeemed So Far, Valid Until), CTA "Shop with This Card" for active cards.
+   - Empty state with Gift icon + "Your balance awaits".
+   - Error state for invalid codes.
+   - "Gift Card Balance" link added to footer Customer Care column.
+
+4. Gift Card balance API (`src/app/api/gift-card/balance/route.ts`):
+   - GET `?code=ZRY-GC-XXXXX` — looks up in-memory gift card store (4 demo cards: active, partially-redeemed, fully-redeemed, expired).
+   - Returns `{code, balance, initial, expiresAt, status, redeemed}` or 404 with helpful message.
+
+WIRING:
+- `src/app/page.tsx`: added TrustBadges section right after Hero → now 22 homepage sections (was 21).
+- `src/components/zariya/product-card.tsx`: enhanced stock display with pulsing dot + added "viewing now" social proof.
+- `src/components/zariya/footer.tsx`: added "Gift Card Balance" link to Customer Care column.
+
+QA VERIFIED (agent-browser):
+- Homepage: Trust badges bar present (Authenticity Guaranteed, White-Glove Delivery, Lifetime Repair). Stock urgency "Only X left" with pulsing dot. "viewing now" social proof on bestsellers. No console errors.
+- `/gift-card` page: "Check Your Balance" h1 renders. Demo codes present. Clicked ZRY-GC-25001 → submitted → result shows "Available Balance" ₹17,500, "Active" status, detail rows.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **22 homepage sections** (was 21), **44 zariya components** (was 43), **6 app pages** (was 5: added /gift-card), **15 API routes** (was 14).
+- New **stock urgency** (pulsing dot) + **social proof** ("viewing now") micro-interactions on product cards.
+- **Trust Badges bar** below hero (6 premium trust signals).
+- **Gift Card balance check** page + API with demo data.
+- Next round opportunities: AR try-on, personalized recommendations, live inventory badges, product video showcase, advanced search filters, wishlist import from URL, more artisan video content, currency-aware pricing throughout.

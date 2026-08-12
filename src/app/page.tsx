@@ -22,11 +22,13 @@ const InstagramGallery = dynamic(() => import("@/components/zariya/sections/inst
 const Newsletter = dynamic(() => import("@/components/zariya/sections/newsletter"));
 const FAQs = dynamic(() => import("@/components/zariya/sections/faqs"));
 const AboutBrand = dynamic(() => import("@/components/zariya/sections/about-brand"));
+const TrustBadges = dynamic(() => import("@/components/zariya/sections/trust-badges").then((m) => m.TrustBadges));
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       <Hero />
+      <TrustBadges />
       <Categories />
       <OrnamentalDivider variant="diamond" />
       <BestSellers />

@@ -45,6 +45,7 @@ const CARE_LINKS = [
   { label: "Contact", href: "/contact" },
   { label: "WhatsApp Concierge", href: `https://wa.me/${BRAND.whatsapp}` },
   { label: "Track Order", href: "/track" },
+  { label: "Gift Card Balance", href: "/gift-card" },
   { label: "Shipping", href: "/shipping" },
   { label: "Returns", href: "/returns" },
   { label: "Size Guide", href: "/size-guide" },
