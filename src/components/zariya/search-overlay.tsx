@@ -33,12 +33,18 @@ export default function SearchOverlay() {
 
   const [query, setQuery] = React.useState("");
   const [focused, setFocused] = React.useState(false);
+  const [activeCategory, setActiveCategory] = React.useState<string>("all");
+  const [maxPrice, setMaxPrice] = React.useState<number>(60000);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Reset query on close
   React.useEffect(() => {
     if (!open) {
-      const t = setTimeout(() => setQuery(""), 200);
+      const t = setTimeout(() => {
+        setQuery("");
+        setActiveCategory("all");
+        setMaxPrice(60000);
+      }, 200);
       return () => clearTimeout(t);
     } else {
       // Autofocus on open
@@ -51,17 +57,19 @@ export default function SearchOverlay() {
     if (!query.trim()) return [];
     const q = query.toLowerCase().trim();
     return PRODUCTS.filter((p) => {
-      return (
+      const matchQuery =
         p.name.toLowerCase().includes(q) ||
         p.subtitle.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q) ||
         p.fabric.toLowerCase().includes(q) ||
         p.collection.toLowerCase().includes(q) ||
         p.tags.some((t) => t.toLowerCase().includes(q)) ||
-        p.colors.some((c) => c.name.toLowerCase().includes(q))
-      );
-    }).slice(0, 6);
-  }, [query]);
+        p.colors.some((c) => c.name.toLowerCase().includes(q));
+      const matchCategory = activeCategory === "all" || p.category === activeCategory;
+      const matchPrice = p.price <= maxPrice;
+      return matchQuery && matchCategory && matchPrice;
+    }).slice(0, 8);
+  }, [query, activeCategory, maxPrice]);
 
   const handleResult = (slug: string) => {
     closeSearch();
@@ -138,6 +146,62 @@ export default function SearchOverlay() {
                   transition={{ duration: 0.4, ease: EASE }}
                 />
               </div>
+
+              {/* Filter bar — shows when there's a query */}
+              {query.trim() && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-4 flex flex-wrap items-center gap-3"
+                >
+                  {/* Category chips */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {["all", "pherans", "shawls", "suits", "kaftans"].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveCategory(cat)}
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-all ${
+                          activeCategory === cat
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-border text-muted-foreground hover:border-gold/50 hover:text-foreground"
+                        }`}
+                      >
+                        {cat === "all" ? "All" : cat}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Price slider */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      Max
+                    </span>
+                    <input
+                      type="range"
+                      min={10000}
+                      max={60000}
+                      step={5000}
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(Number(e.target.value))}
+                      className="h-1 w-24 cursor-pointer appearance-none rounded-full bg-muted accent-gold [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gold"
+                    />
+                    <span className="w-14 font-mono text-[11px] text-foreground">
+                      ₹{(maxPrice / 1000).toFixed(0)}k
+                    </span>
+                  </div>
+                  {(activeCategory !== "all" || maxPrice < 60000) && (
+                    <button
+                      onClick={() => {
+                        setActiveCategory("all");
+                        setMaxPrice(60000);
+                      }}
+                      className="text-[11px] font-medium text-gold underline-offset-2 hover:underline"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </motion.div>
+              )}
 
               {/* Live suggestions */}
               <div className="mt-6">

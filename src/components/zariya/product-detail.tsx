@@ -48,6 +48,7 @@ import type { Product } from "@/lib/types";
 import { Stars } from "./stars";
 import { ProductCard, WhatsAppIcon } from "./product-card";
 import { NotifyMe } from "./notify-me";
+import { Viewer360 } from "./viewer-360";
 import { toast } from "sonner";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -77,6 +78,7 @@ export default function ProductDetail() {
   const [zoom, setZoom] = React.useState(false);
   const [lens, setLens] = React.useState({ x: 50, y: 50 });
   const [spin360, setSpin360] = React.useState(false);
+  const [viewer360Open, setViewer360Open] = React.useState(false);
   const imageWrapRef = React.useRef<HTMLDivElement>(null);
 
   const reviewsRef = React.useRef<HTMLDivElement>(null);
@@ -249,7 +251,7 @@ export default function ProductDetail() {
 
               {/* 360° button */}
               <button
-                onClick={() => setSpin360(true)}
+                onClick={() => setViewer360Open(true)}
                 aria-label="View 360"
                 className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-black/60"
               >
@@ -765,6 +767,13 @@ export default function ProductDetail() {
           </div>
         </div>
       </DialogContent>
+
+      {/* 360° Viewer — separate dialog on top */}
+      <Viewer360
+        product={product}
+        open={viewer360Open}
+        onOpenChange={setViewer360Open}
+      />
     </Dialog>
   );
 }

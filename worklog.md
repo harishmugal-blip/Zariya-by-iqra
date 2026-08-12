@@ -791,3 +791,47 @@ Stage Summary:
 - New **wishlist import from URL** — completes the wishlist-sharing loop end-to-end.
 - **Artisan video showcase** — clickable play overlay + documentary modal with faux controls.
 - Next round opportunities: AR try-on, advanced search filters, live inventory badges throughout, price-drop email integration, product 360° viewer, more artisan video content, personalized email capture.
+
+---
+Task ID: 22
+Agent: Main (Z.ai Code) — Cron Review Round 10
+Task: QA the live site, add advanced search filters, full 360° product viewer
+
+Work Log:
+- Reviewed worklog — project stable with 23 homepage sections, 47 components, 16 API routes, wishlist import, artisan video, notify-me from Rounds 1-9.
+- agent-browser QA: verified all 20 h2 sections render, all routes (admin/journal/track/gift-card) work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Advanced search filters (`src/components/zariya/search-overlay.tsx`):
+   - Added category filter chips: All / pherans / shawls / suits / kaftans (burgundy active state).
+   - Added max-price range slider (₹10k–₹60k, step ₹5k) with gold thumb + live "₹Xk" display.
+   - "Clear filters" link appears when filters are active.
+   - Filter bar animates in (height auto) when a query is typed.
+   - Search results now filter by query AND category AND price (up to 8 results).
+   - Filters reset when search overlay closes.
+
+2. Full 360° product viewer (`src/components/zariya/viewer-360.tsx`):
+   - Dedicated full-screen Dialog with drag-to-rotate interaction.
+   - Pointer events: onPointerDown/Move/Up with pointer capture for smooth dragging.
+   - Dragging horizontally cycles through product images (sensitivity: 8px/frame).
+   - "Drag to rotate" hint overlay (glass badge with cursor icon) when idle.
+   - Frame indicator: "1 / 4" + gold progress bar at bottom.
+   - Auto-spin toggle button (gold when active, spinning RotateCw icon, 150ms interval).
+   - Header: "360° Viewer" eyebrow + product name + close button.
+   - Footer: status text ("Drag horizontally to spin" / "Rotating…" / "Auto-rotating") + Auto-spin button.
+   - Cleanup on close: clears interval, resets frame, stops dragging.
+   - Wired into product-detail.tsx: 360° button now opens the full Viewer360 dialog (replaces the simple 3s auto-cycle).
+   - Added `viewer360Open` state to product detail.
+
+QA VERIFIED (agent-browser):
+- Search filters: opened search → typed "pashmina" → filter bar appeared with All/pherans/shawls/suits/kaftans chips + Max price slider → clicked "shawls" filter. No errors.
+- 360° viewer: opened product → clicked 360° button → viewer opened with "360° Viewer", "Drag to rotate" hint, frame indicator, "Auto-spin" button. No errors.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **23 homepage sections**, **48 zariya components** (was 47), **16 API routes**.
+- New **advanced search filters** (category chips + price slider + clear) in search overlay.
+- New **full 360° product viewer** with drag-to-rotate + auto-spin + frame indicator.
+- Next round opportunities: AR try-on, live inventory badges throughout, price-drop email integration, personalized email capture, product video showcase, more artisan content, currency-aware checkout.
