@@ -266,3 +266,79 @@ Stage Summary:
 - Design: burgundy/gold/ivory palette, Playfair Display + Inter, glass effects, luxury shadows, framer-motion animations throughout.
 - API routes: /api/products, /api/products/[slug], /api/categories, /api/coupons/validate, /api/orders, /api/newsletter, /api/contact, /api/reviews — all smoke-tested green.
 - Database: Order, NewsletterSubscriber, ContactMessage, ProductEnquiry models pushed & working.
+
+---
+Task ID: 13
+Agent: Main (Z.ai Code) — Cron Review Round 1
+Task: QA the live site, fix any bugs, add new luxury features (celebrity collection, luxury packaging, size guide modal, write-a-review modal, micro-interactions)
+
+Work Log:
+- Reviewed worklog — project was stable & complete (homepage, product detail, cart, checkout, search, wishlist, 8 APIs, 30 images).
+- agent-browser QA: verified all 12 sections render, product detail modal works, cart auto-opens, checkout 4-step flow works, live search returns results, no console errors.
+- Found & fixed a bug: new sections/modals used named exports but were imported via `dynamic(() => import(...))` which expects default exports → "Element type is invalid: got Module object" runtime error. Fixed by using `.then((m) => m.NamedExport)` in `page.tsx` and `site-chrome.tsx`.
+
+NEW FEATURES ADDED:
+
+1. Micro-interactions (`src/components/zariya/micro-interactions.tsx`):
+   - `ScrollProgress` — thin gold gradient bar at very top that fills as user scrolls (framer-motion useScroll + useSpring).
+   - `PageLoader` — elegant full-screen loader on first paint with ZARIYA monogram, gold shimmer underline, "Timeless Kashmiri Elegance" tagline. Fades out after 900ms.
+   - `BackToTop` — circular glass+gold button appears after 600px scroll, lifts on hover, smooth-scrolls to top.
+   - All mounted in SiteChrome via `<MicroInteractions />`.
+
+2. Celebrity Collection section (`src/components/zariya/sections/celebrity-collection.tsx`):
+   - Dark burgundy section with gold decorative orbs.
+   - Horizontal snap carousel of 4 celebrity endorsements (Mahira Khan, Aditi Rao Hydari, Sabyasachi Muse, Neha Dhupia) with portrait images, role, quote, star rating, and the product they're wearing (clickable → opens product detail).
+   - Prev/next gold glass nav buttons, center-detecting active card with gold border, dot indicators.
+   - `CELEBRITIES` data added to catalog.ts (4 entries referencing existing product slugs).
+
+3. Luxury Packaging section (`src/components/zariya/sections/luxury-packaging.tsx`):
+   - Split layout: packaging image with floating "Hand Sealed" wax-seal badge + "The Unboxing" ribbon note.
+   - "Luxury Packaging, Worth the Wait." headline with gold-text accent.
+   - 6-feature grid (Heirloom Box, Muslin Wrapping, Burgundy Silk Ribbon, Certificate of Authenticity, Handwritten Note, Concierge Delivery) with lucide icons that swap to primary fill on hover.
+   - `PACKAGING_FEATURES` data (6 features) added to catalog.ts.
+
+4. Size Guide modal (`src/components/zariya/size-guide-modal.tsx`):
+   - Full Dialog with two tabs: Size Chart + How to Measure.
+   - Size Chart: category selector pills (pherans/suits/kaftans/shawls), full measurement table (Size/Bust/Waist/Hip/Length), category-specific notes, Fit Tips card.
+   - How to Measure: 4-step numbered guide (Bust/Waist/Hip/Length) + Made-to-Measure service card.
+   - Pre-selects the product's category when opened from product detail.
+   - `SIZE_CHARTS` (4 categories with full size rows) + `MEASURING_GUIDE` (4 steps) data added to catalog.ts.
+   - Wired into product-detail.tsx "Size Guide" button (replaced inline Popover with Ruler-icon button that calls `openSizeGuide(product.category)`).
+
+5. Write-a-Review modal (`src/components/zariya/review-modal.tsx`):
+   - Full Dialog with interactive 5-star rating (hover + click), name/location inputs, review title, body (1000 char), photo upload (up to 3, FileReader base64 preview, removable).
+   - POSTs to `/api/reviews` with `{productSlug, author, rating, title, body, location, photos}`.
+   - Success screen: animated emerald checkmark (spring), "Thank you for sharing" headline, product name, moderation note, Continue button. sonner toast confirmation.
+   - Wired into product-detail.tsx "Write a Review" button → calls `openReviewModal(product.slug)`.
+
+6. Wishlist heart burst micro-interaction (`src/components/zariya/product-card.tsx`):
+   - Heart button now has spring scale-in animation + 8-direction gold sparkle burst when favorited (radial particles flying outward).
+
+DATA LAYER:
+- `src/lib/types.ts`: added CelebrityItem, SizeRow, SizeChart, PackagingFeature types.
+- `src/data/catalog.ts`: added CELEBRITIES (4), SIZE_CHARTS (4 categories), MEASURING_GUIDE (4 steps), PACKAGING_FEATURES (6).
+- `src/store/use-ui.ts`: added sizeGuideOpen/sizeGuideCategory/openSizeGuide/closeSizeGuide + reviewModalOpen/reviewProductSlug/openReviewModal/closeReviewModal state.
+
+PAGE WIRING:
+- `src/app/page.tsx`: added CelebrityCollection + LuxuryPackaging sections (after LimitedEdition, before ArtisanStory) in editorial order.
+- `src/components/zariya/site-chrome.tsx`: added `<MicroInteractions />` + dynamically-loaded `<SizeGuideModal />` + `<ReviewModal />` to global overlays.
+
+QA VERIFIED (agent-browser):
+- All 13 homepage sections render (added Celebrity Collection + Luxury Packaging).
+- Page loader displays on load then fades.
+- Scroll progress bar visible at top.
+- Back-to-top button appears after scroll, scrolls to top on click.
+- Product detail → Size Guide modal opens with correct category pre-selected, both tabs work.
+- Product detail → Write a Review modal opens, star rating interactive, form fills, submission shows success screen + toast.
+- Wishlist heart burst animation fires on favorite.
+- Celebrity carousel: cards display, clickable to open product detail.
+- Luxury Packaging: image + floating badges + 6 feature cards render.
+- 0 console errors, 0 runtime errors, lint clean (0 errors, 0 warnings).
+
+Stage Summary:
+- Project now has 14 homepage sections (was 12), 8 global overlays (was 6), 3 new data sets.
+- Premium micro-interactions throughout (loader, scroll bar, back-to-top, heart burst).
+- Interactive customer features: full size guide with charts + measuring guide, write-a-review with photo upload.
+- Celebrity social proof section + luxury packaging unboxing showcase.
+- All flows remain functional; no regressions.
+- Next round opportunities: admin dashboard route, product comparison, gift cards, loyalty/rewards program, live chat concierge, AR try-on preview, more product imagery.

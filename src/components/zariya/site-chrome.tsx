@@ -6,6 +6,7 @@ import { Header } from "./header";
 import { Footer } from "./footer";
 import { MobileBottomNav } from "./mobile-bottom-nav";
 import { WhatsAppFab } from "./whatsapp-fab";
+import { MicroInteractions } from "./micro-interactions";
 
 // Overlays — load lazily for fast initial paint
 const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
@@ -14,10 +15,13 @@ const CartDrawer = dynamic(() => import("./cart-drawer"), { ssr: false });
 const SearchOverlay = dynamic(() => import("./search-overlay"), { ssr: false });
 const WishlistDrawer = dynamic(() => import("./wishlist-drawer"), { ssr: false });
 const CheckoutModal = dynamic(() => import("./checkout-modal"), { ssr: false });
+const SizeGuideModal = dynamic(() => import("./size-guide-modal").then((m) => m.SizeGuideModal), { ssr: false });
+const ReviewModal = dynamic(() => import("./review-modal").then((m) => m.ReviewModal), { ssr: false });
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
+      <MicroInteractions />
       <AnnouncementBar />
       <Header />
       <div className="flex-1">{children}</div>
@@ -31,6 +35,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <SearchOverlay />
       <WishlistDrawer />
       <CheckoutModal />
+      <SizeGuideModal />
+      <ReviewModal />
     </div>
   );
 }

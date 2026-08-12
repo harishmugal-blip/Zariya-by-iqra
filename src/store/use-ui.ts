@@ -32,6 +32,18 @@ interface UIState {
   // Recently viewed
   recentlyViewed: string[];
   pushRecent: (slug: string) => void;
+
+  // Size guide modal
+  sizeGuideOpen: boolean;
+  sizeGuideCategory: string | null;
+  openSizeGuide: (category?: string) => void;
+  closeSizeGuide: () => void;
+
+  // Write review modal
+  reviewModalOpen: boolean;
+  reviewProductSlug: string | null;
+  openReviewModal: (slug: string) => void;
+  closeReviewModal: () => void;
 }
 
 export const useUI = create<UIState>((set, get) => ({
@@ -64,4 +76,15 @@ export const useUI = create<UIState>((set, get) => ({
     set((s) => ({
       recentlyViewed: [slug, ...s.recentlyViewed.filter((x) => x !== slug)].slice(0, 8),
     })),
+
+  sizeGuideOpen: false,
+  sizeGuideCategory: null,
+  openSizeGuide: (category) =>
+    set({ sizeGuideOpen: true, sizeGuideCategory: category || null }),
+  closeSizeGuide: () => set({ sizeGuideOpen: false, sizeGuideCategory: null }),
+
+  reviewModalOpen: false,
+  reviewProductSlug: null,
+  openReviewModal: (slug) => set({ reviewModalOpen: true, reviewProductSlug: slug }),
+  closeReviewModal: () => set({ reviewModalOpen: false, reviewProductSlug: null }),
 }));

@@ -123,3 +123,35 @@ export interface FaqItem {
   a: string;
   category: string;
 }
+
+export interface CelebrityItem {
+  id: string;
+  name: string;
+  role: string;
+  quote: string;
+  image: string;
+  productSlug: string;
+  productName: string;
+}
+
+export interface SizeRow {
+  size: string;
+  bust: string;
+  waist: string;
+  hip: string;
+  length: string;
+}
+
+export interface SizeChart {
+  category: string;
+  unit: "inches";
+  note: string;
+  rows: SizeRow[];
+}
+
+export interface PackagingFeature {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+}

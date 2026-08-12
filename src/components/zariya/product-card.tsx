@@ -119,7 +119,39 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
           aria-label={hasWish ? "Remove from wishlist" : "Add to wishlist"}
           className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/80 text-primary shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-white"
         >
-          <Heart className={cn("h-4 w-4 transition-all", hasWish && "fill-destructive text-destructive")} />
+          <motion.span
+            key={hasWish ? "filled" : "empty"}
+            initial={{ scale: 0.6 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 15 }}
+            className="relative grid place-items-center"
+          >
+            <Heart
+              className={cn(
+                "h-4 w-4 transition-colors",
+                hasWish ? "fill-destructive text-destructive" : "text-primary"
+              )}
+            />
+            {hasWish && (
+              <>
+                {/* burst sparkles */}
+                {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+                  <motion.span
+                    key={deg}
+                    initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+                    animate={{
+                      opacity: 0,
+                      scale: 0.8,
+                      x: Math.cos((deg * Math.PI) / 180) * 14,
+                      y: Math.sin((deg * Math.PI) / 180) * 14,
+                    }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="pointer-events-none absolute h-1 w-1 rounded-full bg-gold"
+                  />
+                ))}
+              </>
+            )}
+          </motion.span>
         </button>
 
         {/* Hover actions */}

@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Sparkles,
   MessageCircle,
+  Ruler,
 } from "lucide-react";
 import {
   Dialog,
@@ -35,11 +36,6 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -55,21 +51,13 @@ import { toast } from "sonner";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// Approximate size guide data
-const SIZE_GUIDE = [
-  { size: "XS", bust: '32"', waist: '26"', hip: '34"', shoulder: '14.5"' },
-  { size: "S", bust: '34"', waist: '28"', hip: '36"', shoulder: '15"' },
-  { size: "M", bust: '36"', waist: '30"', hip: '38"', shoulder: '15.5"' },
-  { size: "L", bust: '38"', waist: '32"', hip: '40"', shoulder: '16"' },
-  { size: "XL", bust: '40"', waist: '34"', hip: '42"', shoulder: '16.5"' },
-  { size: "XXL", bust: '42"', waist: '36"', hip: '44"', shoulder: '17"' },
-];
-
 export default function ProductDetail() {
   const activeSlug = useUI((s) => s.activeProductSlug);
   const variant = useUI((s) => s.activeVariant);
   const closeProduct = useUI((s) => s.closeProduct);
   const openCheckout = useUI((s) => s.openCheckout);
+  const openSizeGuide = useUI((s) => s.openSizeGuide);
+  const openReviewModal = useUI((s) => s.openReviewModal);
   const recentlyViewed = useUI((s) => s.recentlyViewed);
   const addItem = useCart((s) => s.addItem);
   const toggleWish = useWishlist((s) => s.toggle);
@@ -425,50 +413,13 @@ export default function ProductDetail() {
                 <span className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
                   Size: <span className="text-foreground">{size}</span>
                 </span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="text-[11px] text-gold underline-offset-2 hover:underline">
-                      Size Guide
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 rounded-xl border-gold/20 p-4" align="end">
-                    <h4 className="mb-3 font-serif text-base font-semibold">Size Guide</h4>
-                    <div className="overflow-hidden rounded-lg border">
-                      <table className="w-full text-xs">
-                        <thead className="bg-muted/40">
-                          <tr>
-                            <th className="p-2 text-left font-medium">Size</th>
-                            <th className="p-2 text-left font-medium">Bust</th>
-                            <th className="p-2 text-left font-medium">Waist</th>
-                            <th className="p-2 text-left font-medium">Hip</th>
-                            <th className="p-2 text-left font-medium">Shoulder</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {SIZE_GUIDE.filter((s) => product.sizes.includes(s.size)).map((s) => (
-                            <tr key={s.size} className="border-t border-border/60">
-                              <td className="p-2 font-semibold text-primary">{s.size}</td>
-                              <td className="p-2">{s.bust}</td>
-                              <td className="p-2">{s.waist}</td>
-                              <td className="p-2">{s.hip}</td>
-                              <td className="p-2">{s.shoulder}</td>
-                            </tr>
-                          ))}
-                          {!product.sizes.find((s) => s !== "One Size") && (
-                            <tr className="border-t border-border/60">
-                              <td colSpan={5} className="p-3 text-center text-muted-foreground">
-                                One Size — gently flowing silhouette
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                    <p className="mt-2 text-[10px] text-muted-foreground">
-                      Measurements in inches. Made-to-measure available on WhatsApp.
-                    </p>
-                  </PopoverContent>
-                </Popover>
+                <button
+                  onClick={() => openSizeGuide(product.category)}
+                  className="flex items-center gap-1 text-[11px] text-gold underline-offset-2 hover:underline"
+                >
+                  <Ruler className="h-3 w-3" />
+                  Size Guide
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s) => (
@@ -631,7 +582,12 @@ export default function ProductDetail() {
             <section ref={reviewsRef} className="scroll-mt-4 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-xl font-semibold">Reviews & Ratings</h3>
-                <Button variant="outline" size="sm" className="rounded-full text-xs">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full text-xs"
+                  onClick={() => openReviewModal(product.slug)}
+                >
                   <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> Write a Review
                 </Button>
               </div>

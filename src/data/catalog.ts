@@ -5,6 +5,9 @@ import type {
   Coupon,
   Testimonial,
   FaqItem,
+  CelebrityItem,
+  SizeChart,
+  PackagingFeature,
 } from "@/lib/types";
 
 export const BRAND = {
@@ -795,5 +798,138 @@ export const FAQS: FaqItem[] = [
     category: "Authenticity",
     q: "Are your pieces unique?",
     a: "No two pieces are identical. Hand-embroidery ensures each garment carries its own subtle variations — the signature of the artisan who made it.",
+  },
+];
+
+export const CELEBRITIES: CelebrityItem[] = [
+  {
+    id: "cel1",
+    name: "Mahira Khan",
+    role: "Actor & Style Icon",
+    quote: "ZARIYA understands heritage like no other. Their pheran made me feel rooted and royal at once.",
+    image: "/images/lifestyle/model-1.png",
+    productSlug: "shahzadi-pheran-burgundy",
+    productName: "Shahzadi Pheran",
+  },
+  {
+    id: "cel2",
+    name: "Aditi Rao Hydari",
+    role: "Cinema & Couture",
+    quote: "The sozni work is poetry in thread. I have never owned anything quite like my Gulbadan suit.",
+    image: "/images/lifestyle/model-2.png",
+    productSlug: "gulbadan-embroidered-suit",
+    productName: "Gulbadan Suit Set",
+  },
+  {
+    id: "cel3",
+    name: "Sabyasachi Muse",
+    role: "Editorial Stylist",
+    quote: "A pashmina that feels like a whisper and weighs like an heirloom. ZARIYA is the future of Kashmiri luxury.",
+    image: "/images/hero/hero-2.png",
+    productSlug: "noor-pashmina-shawl-gold",
+    productName: "Noor Pashmina Shawl",
+  },
+  {
+    id: "cel4",
+    name: "Neha Dhupia",
+    role: "Producer & Mother",
+    quote: "I gifted my mother the Dilruba shawl. She wept. ZARIYA creates emotion, not just fashion.",
+    image: "/images/hero/hero-3.png",
+    productSlug: "dilruba-emerald-pashmina",
+    productName: "Dilruba Pashmina",
+  },
+];
+
+export const SIZE_CHARTS: SizeChart[] = [
+  {
+    category: "pherans",
+    unit: "inches",
+    note: "Pherans are designed to be a relaxed, flowing fit. For a tailored silhouette, size down. Garment length is measured from shoulder to hem.",
+    rows: [
+      { size: "XS", bust: "34", waist: "30", hip: "36", length: "48" },
+      { size: "S", bust: "36", waist: "32", hip: "38", length: "48" },
+      { size: "M", bust: "38", waist: "34", hip: "40", length: "50" },
+      { size: "L", bust: "40", waist: "36", hip: "42", length: "50" },
+      { size: "XL", bust: "42", waist: "38", hip: "44", length: "52" },
+      { size: "XXL", bust: "44", waist: "40", hip: "46", length: "52" },
+    ],
+  },
+  {
+    category: "suits",
+    unit: "inches",
+    note: "Kurta measurements. The churidar is free-size with a drawstring waist. Dupatta measures 2.4m × 0.9m.",
+    rows: [
+      { size: "XS", bust: "33", waist: "28", hip: "35", length: "44" },
+      { size: "S", bust: "35", waist: "30", hip: "37", length: "44" },
+      { size: "M", bust: "37", waist: "32", hip: "39", length: "46" },
+      { size: "L", bust: "39", waist: "34", hip: "41", length: "46" },
+      { size: "XL", bust: "41", waist: "36", hip: "43", length: "48" },
+      { size: "XXL", bust: "43", waist: "38", hip: "45", length: "48" },
+    ],
+  },
+  {
+    category: "kaftans",
+    unit: "inches",
+    note: "Kaftans are one-size-fits-most with an adjustable belt. Bust range 36–46 inches.",
+    rows: [
+      { size: "S", bust: "36", waist: "32", hip: "38", length: "54" },
+      { size: "M", bust: "38", waist: "34", hip: "40", length: "54" },
+      { size: "L", bust: "40", waist: "36", hip: "42", length: "54" },
+      { size: "XL", bust: "42", waist: "38", hip: "44", length: "54" },
+    ],
+  },
+  {
+    category: "shawls",
+    unit: "inches",
+    note: "Shawls are one size. Dimensions listed are the full fabric spread.",
+    rows: [
+      { size: "One Size", bust: "—", waist: "—", hip: "—", length: "78" },
+    ],
+  },
+];
+
+export const MEASURING_GUIDE = [
+  { step: "Bust", instruction: "Measure around the fullest part of your bust, keeping the tape level across your back.", icon: "Ruler" },
+  { step: "Waist", instruction: "Measure around your natural waistline — the narrowest part, usually just above the navel.", icon: "Ruler" },
+  { step: "Hip", instruction: "Stand with feet together and measure around the fullest part of your hips.", icon: "Ruler" },
+  { step: "Length", instruction: "For pherans and kaftans, measure from the high point of your shoulder down to the desired hem.", icon: "Ruler" },
+];
+
+export const PACKAGING_FEATURES: PackagingFeature[] = [
+  {
+    id: "pk1",
+    title: "Heirloom Box",
+    description: "Each piece rests in a hand-finished ivory keepsake box, foil-stamped in royal gold with the ZARIYA monogram.",
+    icon: "Package",
+  },
+  {
+    id: "pk2",
+    title: "Muslin Wrapping",
+    description: "Wrapped in breathable muslin — the traditional cloth used by Kashmiri weavers to protect fine pashmina for centuries.",
+    icon: "Gift",
+  },
+  {
+    id: "pk3",
+    title: "Burgundy Silk Ribbon",
+    description: "Tied with a hand-knotted burgundy silk ribbon and a wax-sealed note from the artisan who made your piece.",
+    icon: "Award",
+  },
+  {
+    id: "pk4",
+    title: "Certificate of Authenticity",
+    description: "A signed certificate bearing the artisan's name, the hours of needlework, and the grade of the pashmina fibre.",
+    icon: "BadgeCheck",
+  },
+  {
+    id: "pk5",
+    title: "Handwritten Note",
+    description: "A personal note from the ZARIYA atelier, telling the story of your garment and how to care for it for generations.",
+    icon: "Mail",
+  },
+  {
+    id: "pk6",
+    title: "Concierge Delivery",
+    description: "White-glove delivery to your door, with tracking and a dedicated concierge for any questions — worldwide.",
+    icon: "Truck",
   },
 ];
