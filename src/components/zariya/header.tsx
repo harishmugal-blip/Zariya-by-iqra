@@ -12,6 +12,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
+import { useCurrency } from "@/store/use-currency";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -84,6 +85,8 @@ export function Header() {
   const openSearch = useUI((s) => s.openSearch);
   const menuOpen = useUI((s) => s.menuOpen);
   const setMenuOpen = useUI((s) => s.setMenuOpen);
+  const currency = useCurrency((s) => s.currency);
+  const setCurrency = useCurrency((s) => s.setCurrency);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -260,6 +263,19 @@ export function Header() {
 
         {/* Right — actions */}
         <div className="flex items-center gap-0.5">
+          {/* Currency switcher */}
+          <button
+            onClick={() => setCurrency(currency === "INR" ? "USD" : "INR")}
+            aria-label={`Switch currency, currently ${currency}`}
+            className={cn(
+              "hidden rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-all sm:inline-flex",
+              atTop
+                ? "border-white/30 text-white hover:border-gold hover:text-gold"
+                : "border-border text-foreground hover:border-gold hover:text-gold"
+            )}
+          >
+            {currency}
+          </button>
           <IconActionButton label="Search" onClick={openSearch} atTop={atTop}>
             <Search className="h-[18px] w-[18px]" />
           </IconActionButton>

@@ -1,12 +1,13 @@
 "use client";
 
-import { Heart, Eye, ShoppingBag, Star } from "lucide-react";
+import { Heart, Eye, ShoppingBag, Star, GitCompare } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { cn, formatPrice, discountPercent, whatsappLink, buildProductWhatsAppMessage } from "@/lib/utils";
 import { BRAND } from "@/data/catalog";
 import { useCart } from "@/store/use-cart";
 import { useWishlist } from "@/store/use-wishlist";
+import { useCompare } from "@/store/use-compare";
 import { useUI } from "@/store/use-ui";
 import { Stars } from "./stars";
 import { toast } from "sonner";
@@ -24,6 +25,9 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
   const addItem = useCart((s) => s.addItem);
   const toggleWish = useWishlist((s) => s.toggle);
   const hasWish = useWishlist((s) => s.has(product.id));
+  const toggleCompare = useCompare((s) => s.toggle);
+  const inCompare = useCompare((s) => s.has(product.id));
+  const openCompare = useCompare((s) => s.openCompare);
   const openQuickView = useUI((s) => s.openQuickView);
   const openProduct = useUI((s) => s.openProduct);
   const discount = discountPercent(product.price, product.compareAtPrice);
@@ -38,6 +42,17 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
     e.stopPropagation();
     toggleWish(product.id);
     toast(hasWish ? "Removed from wishlist" : "Added to wishlist");
+  };
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleCompare(product.id);
+    if (!inCompare) {
+      toast.success("Added to compare", {
+        description: "View comparison",
+        action: { label: "Compare", onClick: () => openCompare() },
+      });
+    }
   };
 
   const handleQuickView = (e: React.MouseEvent) => {
@@ -152,6 +167,15 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
               </>
             )}
           </motion.span>
+        </button>
+
+        {/* Compare */}
+        <button
+          onClick={handleCompare}
+          aria-label={inCompare ? "Remove from compare" : "Add to compare"}
+          className="absolute right-3 top-14 grid h-9 w-9 place-items-center rounded-full bg-white/80 text-primary shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-white"
+        >
+          <GitCompare className={cn("h-4 w-4 transition-all", inCompare && "text-gold")} />
         </button>
 
         {/* Hover actions */}

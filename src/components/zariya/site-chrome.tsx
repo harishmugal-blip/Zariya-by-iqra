@@ -8,6 +8,8 @@ import { MobileBottomNav } from "./mobile-bottom-nav";
 import { WhatsAppFab } from "./whatsapp-fab";
 import { MicroInteractions } from "./micro-interactions";
 import { LiveChat } from "./live-chat";
+import { CompareBar } from "./compare-bar";
+import { CompareDrawer } from "./compare-drawer";
 
 // Overlays — load lazily for fast initial paint
 const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
@@ -30,6 +32,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <MobileBottomNav />
       <WhatsAppFab />
       <LiveChat />
+      <CompareBar />
       {/* Global overlays */}
       <QuickView />
       <ProductDetail />
@@ -39,6 +42,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <CheckoutModal />
       <SizeGuideModal />
       <ReviewModal />
+      <CompareDrawer />
     </div>
   );
 }
