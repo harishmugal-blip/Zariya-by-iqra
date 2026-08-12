@@ -13,6 +13,7 @@ interface WishlistState {
   openWishlist: () => void;
   closeWishlist: () => void;
   count: () => number;
+  importSlugs: (ids: string[]) => number;
 }
 
 export const useWishlist = create<WishlistState>()(
@@ -30,6 +31,12 @@ export const useWishlist = create<WishlistState>()(
       openWishlist: () => set({ isOpen: true }),
       closeWishlist: () => set({ isOpen: false }),
       count: () => get().ids.length,
+      importSlugs: (newIds) => {
+        const existing = get().ids;
+        const merged = [...new Set([...existing, ...newIds])];
+        set({ ids: merged });
+        return merged.length - existing.length;
+      },
     }),
     { name: "zariya-wishlist", storage: createJSONStorage(() => localStorage) }
   )

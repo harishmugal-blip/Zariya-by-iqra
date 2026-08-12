@@ -10,6 +10,7 @@ import { MicroInteractions } from "./micro-interactions";
 import { LiveChat } from "./live-chat";
 import { CompareBar } from "./compare-bar";
 import { CompareDrawer } from "./compare-drawer";
+import { WishlistImport } from "./wishlist-import";
 
 // Overlays — load lazily for fast initial paint
 const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
@@ -24,6 +25,7 @@ const ReviewModal = dynamic(() => import("./review-modal").then((m) => m.ReviewM
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
+      <WishlistImport />
       <MicroInteractions />
       <AnnouncementBar />
       <Header />

@@ -1,7 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Hourglass, Heart, Scissors, Award } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Hourglass, Heart, Scissors, Award, Play, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { BRAND } from "@/data/catalog";
 
 const STATS = [
@@ -12,6 +14,8 @@ const STATS = [
 ];
 
 export default function ArtisanStory() {
+  const [videoOpen, setVideoOpen] = useState(false);
+
   return (
     <section
       aria-label="Artisan story"
@@ -22,7 +26,7 @@ export default function ArtisanStory() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-          {/* Image */}
+          {/* Image with video play */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -30,17 +34,37 @@ export default function ArtisanStory() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <div className="relative overflow-hidden rounded-2xl luxury-shadow">
+            <button
+              onClick={() => setVideoOpen(true)}
+              className="group relative block w-full overflow-hidden rounded-2xl luxury-shadow"
+              aria-label="Play artisan documentary"
+            >
               <div className="aspect-[4/5]">
                 <img
                   src="/images/lifestyle/artisan.png"
                   alt="Kashmiri artisan hand-embroidering a pheran"
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent" />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent" />
+              {/* Play button */}
+              <div className="absolute inset-0 grid place-items-center">
+                <span className="relative grid h-16 w-16 place-items-center rounded-full bg-gold/90 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-gold sm:h-20 sm:w-20">
+                  <span className="pointer-events-none absolute inset-0 animate-pulse-ring rounded-full bg-gold" />
+                  <Play className="h-7 w-7 fill-primary sm:h-9 sm:w-9" />
+                </span>
+              </div>
+              {/* Caption */}
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                <span className="rounded-full glass px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                  Watch · 2 min
+                </span>
+                <span className="text-[10px] font-medium text-primary-foreground/80">
+                  The Art of Aari
+                </span>
+              </div>
+            </button>
             {/* Floating badge */}
             <div className="absolute -bottom-5 -right-2 rounded-2xl border border-gold/30 bg-background/95 px-5 py-4 text-center backdrop-blur-md luxury-shadow sm:-right-6">
               <p className="font-serif text-3xl font-semibold text-primary">150+</p>
@@ -116,6 +140,50 @@ export default function ArtisanStory() {
           </motion.div>
         </div>
       </div>
+
+      {/* Video modal */}
+      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <DialogContent className="max-w-4xl overflow-hidden rounded-3xl border-gold/20 p-0">
+          <DialogTitle className="sr-only">Artisan documentary — The Art of Aari</DialogTitle>
+          <div className="relative aspect-video bg-primary">
+            <img
+              src="/images/lifestyle/artisan.png"
+              alt="Artisan at work"
+              className="h-full w-full object-cover opacity-80"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
+            {/* Faux video controls */}
+            <div className="absolute inset-0 grid place-items-center">
+              <div className="text-center text-primary-foreground">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-full bg-gold text-primary"
+                >
+                  <Play className="h-8 w-8 fill-primary" />
+                </motion.div>
+                <p className="font-serif text-2xl font-bold">The Art of Aari</p>
+                <p className="mt-1 text-xs text-primary-foreground/70">
+                  A 2-minute documentary from the ZARIYA atelier
+                </p>
+              </div>
+            </div>
+            {/* Bottom bar */}
+            <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-gradient-to-t from-primary to-transparent p-4">
+              <div className="flex items-center gap-2 text-primary-foreground">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-gold text-primary">
+                  <Play className="h-4 w-4 fill-primary" />
+                </span>
+                <span className="text-xs">0:00 / 2:14</span>
+              </div>
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-primary-foreground/20">
+                <div className="h-full w-0 rounded-full bg-gold" />
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

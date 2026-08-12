@@ -745,3 +745,49 @@ Stage Summary:
 - New **Notify Me** feature — price-drop + back-in-stock alert subscriptions with dedicated API + reusable component.
 - **CTA shimmer** polish on Add to Bag button + **skeleton loader** utility for future use.
 - Next round opportunities: AR try-on, product video showcase, advanced search filters, wishlist import from URL, live inventory badges throughout, price-drop email integration, more artisan video content.
+
+---
+Task ID: 21
+Agent: Main (Z.ai Code) — Cron Review Round 9
+Task: QA the live site, add wishlist import from URL, artisan video showcase, styling polish
+
+Work Log:
+- Reviewed worklog — project stable with 23 homepage sections, 16 API routes, notify-me, currency-aware pricing, picked-for-you from Rounds 1-8.
+- agent-browser QA: verified all 20 h2 sections render, all routes (admin/journal/track/gift-card) work, no console errors, lint clean.
+- Site was stable → proposed & implemented new features.
+
+NEW FEATURES ADDED:
+
+1. Wishlist import from URL (`src/components/zariya/wishlist-import.tsx`):
+   - Reads `?wishlist=slug1,slug2,...` query param on mount.
+   - Maps slugs to product IDs, calls `importSlugs()` to merge into existing wishlist (dedup).
+   - Shows toast ("N pieces imported to your wishlist" with "View" action) + floating gold banner with emerald check + View/Dismiss buttons.
+   - Cleans the URL after import (removes the param via history.replaceState).
+   - Uses `useRef` guard + `queueMicrotask` to avoid double-processing and lint cascading-render warning.
+   - Added `importSlugs(ids)` method to wishlist store (returns count of newly added).
+   - Wired into SiteChrome (runs on every page).
+   - Completes the wishlist-sharing feature end-to-end: Copy Link in wishlist drawer → recipient opens URL → items auto-import + banner.
+
+2. Artisan video showcase (`src/components/zariya/sections/artisan-story.tsx`):
+   - Artisan image now has a clickable play button overlay (gold circle with pulse-ring animation + Play icon).
+   - "Watch · 2 min" caption + "The Art of Aari" label.
+   - Hover: image zooms, play button scales up.
+   - Clicking opens a video modal (Dialog, max-w-4xl, 16:9 aspect):
+     - Artisan image with gradient overlay.
+     - Centered gold play button (spring animation) + "The Art of Aari" title + "A 2-minute documentary" subtitle.
+     - Faux video controls bar: play button, "0:00 / 2:14" timestamp, gold progress bar.
+   - Added `useState` for videoOpen, `Play` + `X` icon imports, Dialog import.
+
+3. Wishlist store enhancement (`src/store/use-wishlist.ts`):
+   - Added `importSlugs(ids: string[])` method — merges new IDs with existing (dedup via Set), returns count of newly added.
+
+QA VERIFIED (agent-browser):
+- Wishlist import: visited `/?wishlist=shahzadi-pheran-burgundy,noor-pashmina-shawl-gold` → banner "added to your wishlist" appeared → URL cleaned (search param removed). No errors.
+- Artisan video: scrolled to Artisan Story → clicked play button → video modal opened with "The Art of Aari" + "documentary" text + faux controls.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Project now has **23 homepage sections**, **47 zariya components** (was 46), **16 API routes**.
+- New **wishlist import from URL** — completes the wishlist-sharing loop end-to-end.
+- **Artisan video showcase** — clickable play overlay + documentary modal with faux controls.
+- Next round opportunities: AR try-on, advanced search filters, live inventory badges throughout, price-drop email integration, product 360° viewer, more artisan video content, personalized email capture.
