@@ -134,7 +134,7 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
         <button
           onClick={handleWish}
           aria-label={hasWish ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/80 text-gold shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-background"
+          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-white"
         >
           <motion.span
             key={hasWish ? "filled" : "empty"}
@@ -175,7 +175,7 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
         <button
           onClick={handleCompare}
           aria-label={inCompare ? "Remove from compare" : "Add to compare"}
-          className="absolute right-3 top-14 grid h-9 w-9 place-items-center rounded-full bg-background/80 text-gold shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-background"
+          className="absolute right-3 top-14 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-white"
         >
           <GitCompare className={cn("h-4 w-4 transition-all", inCompare && "text-gold")} />
         </button>
@@ -191,7 +191,7 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
           <button
             onClick={handleQuickView}
             aria-label="Quick view"
-            className="grid h-11 w-11 place-items-center rounded-full bg-background text-gold shadow-lg transition-all hover:scale-110 active:scale-95"
+            className="grid h-11 w-11 place-items-center rounded-full bg-white text-primary shadow-lg transition-all hover:scale-110 active:scale-95"
           >
             <Eye className="h-4 w-4" />
           </button>

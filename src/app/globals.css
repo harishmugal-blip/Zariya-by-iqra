@@ -52,49 +52,49 @@
 :root {
   --radius: 0.75rem;
 
-  /* Luxury ZARIYA Palette — Dark Black-Golden */
-  --background: 38 30% 6%;            /* Black-Golden Mix — very dark */
-  --foreground: 40 25% 92%;           /* Warm Ivory text */
-  --card: 38 25% 9%;                  /* Dark card */
-  --card-foreground: 40 25% 92%;
-  --popover: 38 25% 9%;
-  --popover-foreground: 40 25% 92%;
+  /* Luxury ZARIYA Palette — Light Golden Cream + Black Text + White Outline */
+  --background: 38 40% 95%;            /* Warm golden cream — light, black text visible */
+  --foreground: 0 0% 5%;              /* BLACK text */
+  --card: 40 45% 98%;                 /* Lighter card */
+  --card-foreground: 0 0% 5%;
+  --popover: 40 45% 98%;
+  --popover-foreground: 0 0% 5%;
 
-  --primary: 38 55% 55%;             /* Royal Gold as primary */
-  --primary-foreground: 38 30% 6%;    /* Black text on gold */
+  --primary: 38 55% 55%;             /* Royal Gold buttons */
+  --primary-foreground: 0 0% 5%;      /* Black text on gold */
 
-  --secondary: 38 35% 16%;           /* Dark gold-brown */
-  --secondary-foreground: 40 25% 92%;
+  --secondary: 38 45% 88%;           /* Light gold tint */
+  --secondary-foreground: 0 0% 5%;
 
-  --muted: 38 20% 13%;               /* Dark muted */
-  --muted-foreground: 38 18% 62%;    /* Light muted text */
+  --muted: 38 30% 90%;               /* Light muted */
+  --muted-foreground: 0 0% 35%;      /* Dark grey muted text */
 
   --accent: 38 55% 55%;              /* Royal Gold accent */
-  --accent-foreground: 38 30% 6%;
+  --accent-foreground: 0 0% 5%;
 
   --destructive: 0 70% 45%;          /* Elegant Red */
-  --success: 152 56% 40%;            /* Emerald Green */
+  --success: 152 56% 30%;            /* Emerald Green */
   --gold: 38 55% 55%;                /* Royal Gold */
-  --gold-foreground: 38 30% 6%;       /* Black on gold */
-  --champagne: 43 56% 68%;
+  --gold-foreground: 0 0% 5%;         /* Black on gold */
+  --champagne: 43 56% 78%;
 
-  --border: 38 45% 35%;              /* GOLDEN OUTLINE — visible gold */
-  --input: 38 30% 14%;               /* Dark input with gold tint */
+  --border: 0 0% 100%;               /* WHITE OUTLINE / BORDERS */
+  --input: 0 0% 100%;                /* White input borders */
   --ring: 38 55% 55%;                /* Golden focus ring */
 
   --chart-1: 38 55% 55%;
   --chart-2: 43 56% 68%;
-  --chart-3: 352 68% 50%;
-  --chart-4: 152 56% 40%;
-  --chart-5: 0 70% 50%;
+  --chart-3: 352 68% 40%;
+  --chart-4: 152 56% 30%;
+  --chart-5: 0 70% 45%;
 
-  --sidebar: 38 25% 9%;
-  --sidebar-foreground: 40 25% 92%;
+  --sidebar: 40 45% 98%;
+  --sidebar-foreground: 0 0% 5%;
   --sidebar-primary: 38 55% 55%;
-  --sidebar-primary-foreground: 38 30% 6%;
-  --sidebar-accent: 38 20% 13%;
-  --sidebar-accent-foreground: 40 25% 92%;
-  --sidebar-border: 38 45% 35%;
+  --sidebar-primary-foreground: 0 0% 5%;
+  --sidebar-accent: 38 30% 90%;
+  --sidebar-accent-foreground: 0 0% 5%;
+  --sidebar-border: 0 0% 100%;
   --sidebar-ring: 38 55% 55%;
 }
 
@@ -144,6 +144,10 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-playfair), Georgia, serif;
     letter-spacing: -0.01em;
+  }
+  /* White borders with subtle shadow so they're visible on light background */
+  .rounded-2xl, .rounded-3xl, .rounded-xl, .border {
+    box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.9), 0 1px 3px hsl(38 55% 30% / 0.12);
   }
 }
 

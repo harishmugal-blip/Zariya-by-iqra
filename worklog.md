@@ -969,3 +969,36 @@ Stage Summary:
 - Note: text is warm ivory (not pure black) because black text is invisible on dark backgrounds. Black is used on gold buttons (primary-foreground).
 - All components updated to work with the dark theme.
 - Next round: verify all sections look good on dark theme, fix any remaining hardcoded light colors.
+
+---
+Task ID: 26
+Agent: Main (Z.ai Code) — Black Text + White Outline Theme Fix
+Task: Fix theme — light background, BLACK text (visible), WHITE outline/borders
+
+Work Log:
+- User clarification: "mene tax fornt ko bola tha qyuki vo dikhte nahi mene bola tha fornt colour black or outline white karne ko" — text wasn't visible on dark theme; user wants BLACK text + WHITE outline on a light background.
+- Reverted dark theme to a LIGHT golden-cream theme so black text is visible:
+  - `--background`: warm golden cream (HSL 38 40% 95% → rgb(247,244,237))
+  - `--foreground`: BLACK (HSL 0 0% 5% → rgb(13,13,13)) — now clearly visible
+  - `--card`: lighter (40 45% 98%)
+  - `--primary`: royal gold buttons (38 55% 55%)
+  - `--primary-foreground`: black text on gold buttons
+  - `--border`: WHITE (0 0% 100%) — white outlines/borders
+  - `--input`: white
+- Added box-shadow to `.rounded-2xl, .rounded-3xl, .rounded-xl, .border` so white borders are visible on light background: `0 0 0 1px hsl(0 0% 100% / 0.9), 0 1px 3px hsl(38 55% 30% / 0.12)`.
+- Reverted dark-theme component fixes:
+  - `product-card.tsx`: buttons back to `bg-white/90 text-primary`
+  - `product-detail.tsx`: video play button back to `bg-white/85 text-primary`
+  - `artisan-story.tsx`: back to `bg-[#FBF5EC]`
+
+QA VERIFIED (agent-browser):
+- Background: rgb(247, 244, 237) — warm golden cream ✅
+- Text: rgb(13, 13, 13) — BLACK (visible) ✅
+- Borders: rgb(255, 255, 255) — WHITE ✅
+- Gold buttons: rgb(203, 157, 77) — royal gold ✅
+- 0 console errors, 0 page errors. Lint: 0 errors.
+
+Stage Summary:
+- Theme is now LIGHT golden-cream background + BLACK text (visible) + WHITE outline/borders.
+- Gold buttons with black text for CTAs.
+- All components reverted to work with the light theme.
