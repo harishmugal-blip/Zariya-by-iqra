@@ -1132,3 +1132,46 @@ Stage Summary:
 - All admin APIs protected with auth (401 without login).
 - Storefront still reads from static catalog (fast) — can be switched to DB later.
 - Next: switch storefront to read from DB, add category/coupon management, image upload.
+
+---
+Task ID: 29
+Agent: Main (Z.ai Code) — Storefront Reads from DB
+Task: Wire storefront to read products from database (with static fallback)
+
+Work Log:
+- User request: "Wire storefront to read from DB (fallback to static)" — admin changes should reflect on storefront.
+- Updated `/api/products` route (`src/app/api/products/route.ts`):
+  - Now reads from `db.product.findMany({ where: { active: true } })`.
+  - Converts DB rows to Product type (parsing JSON fields: fabricDetails, colors, sizes, images, badges, tags).
+  - Falls back to static `PRODUCTS` from catalog if DB query fails.
+  - All filters (category, collection, featured, bestseller, new, limited, search, price, sort) work on DB data.
+- Updated `/api/products/[slug]` route:
+  - Reads single product from DB by slug.
+  - Falls back to static catalog if not found.
+  - Related products also read from DB.
+- Updated BestSellers section (`src/components/zariya/sections/best-sellers.tsx`):
+  - Added `useEffect` to fetch products from `/api/products` on mount.
+  - `dbProducts` state (initially static PRODUCTS for instant render).
+  - `filterAndSort` now accepts products parameter.
+  - Product count display uses `dbProducts.length`.
+- Added PATCH + DELETE handlers to `/api/admin/products/route.ts`:
+  - PATCH (id in body) — updates any product fields.
+  - DELETE (id in query) — deletes a product.
+  - Both require auth (getSession).
+
+QA VERIFIED (curl end-to-end test):
+1. Storefront products API reads from DB → count: 12 ✅
+2. Login → cookie set (113 chars) ✅
+3. Admin products API → Noorjahan Suit Set, price ₹29,800 ✅
+4. PATCH price to ₹55,555 → success: `{"success":true,"product":...}` ✅
+5. Storefront API now shows: Noorjahan Suit Set = ₹55,555 ✅
+6. **SYNC WORKS! Admin change reflects on storefront** ✅
+7. Storefront renders 20 h2 sections ✅
+8. 0 console errors. Lint: 0 errors.
+
+Stage Summary:
+- Storefront now reads products from DB with static fallback.
+- Admin changes (price, stock, name, etc.) instantly reflect on storefront.
+- BestSellers (main shop grid) fetches from DB on mount.
+- All product APIs (list, single, related) are DB-backed.
+- Next: update NewArrivals, LimitedEdition, PickedForYou sections to also fetch from DB; add image upload to admin.

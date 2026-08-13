@@ -1,14 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Filter, SlidersHorizontal, Check, Star } from "lucide-react";
 import {
-  PRODUCTS,
+  PRODUCTS as STATIC_PRODUCTS,
   CATEGORIES,
   COLORS,
   BRAND,
 } from "@/data/catalog";
+import type { Product } from "@/lib/types";
 import { ProductCard } from "@/components/zariya/product-card";
 import { useUI } from "@/store/use-ui";
 import { cn, formatPrice, whatsappLink } from "@/lib/utils";
@@ -65,8 +66,8 @@ function toggle(set: Set<string>, value: string): Set<string> {
   return next;
 }
 
-function filterAndSort(state: FilterState) {
-  let list = PRODUCTS.filter((p) => {
+function filterAndSort(state: FilterState, products: Product[] = STATIC_PRODUCTS) {
+  let list = products.filter((p) => {
     if (state.categories.size > 0 && !state.categories.has(p.category)) return false;
     if (p.price > state.maxPrice) return false;
     if (state.colors.size > 0 && !p.colors.some((c) => state.colors.has(c.name))) return false;
@@ -301,10 +302,21 @@ function FiltersPanel({
 export default function BestSellers() {
   const [state, setState] = useState<FilterState>(INITIAL);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dbProducts, setDbProducts] = useState<Product[]>(STATIC_PRODUCTS);
   const filtersOpen = useUI((s) => s.filtersOpen);
   const setFiltersOpen = useUI((s) => s.setFiltersOpen);
 
-  const filtered = useMemo(() => filterAndSort(state), [state]);
+  // Fetch products from DB (with static fallback)
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.products?.length) setDbProducts(data.products);
+      })
+      .catch(() => {});
+  }, []);
+
+  const filtered = useMemo(() => filterAndSort(state, dbProducts), [state, dbProducts]);
 
   const update = (updater: (prev: FilterState) => FilterState) => {
     setState(updater);
@@ -372,7 +384,7 @@ export default function BestSellers() {
             <div className="mb-6 hidden items-center justify-between gap-4 lg:flex">
               <p className="text-sm text-muted-foreground">
                 Showing <span className="font-semibold text-foreground">{filtered.length}</span> of{" "}
-                <span className="font-semibold text-foreground">{PRODUCTS.length}</span> pieces
+                <span className="font-semibold text-foreground">{dbProducts.length}</span> pieces
               </p>
               <div className="flex items-center gap-3">
                 <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Sort</span>
@@ -382,7 +394,7 @@ export default function BestSellers() {
 
             <p className="mb-4 text-sm text-muted-foreground lg:hidden">
               Showing <span className="font-semibold text-foreground">{filtered.length}</span> of{" "}
-              <span className="font-semibold text-foreground">{PRODUCTS.length}</span> pieces
+              <span className="font-semibold text-foreground">{dbProducts.length}</span> pieces
             </p>
 
             {filtered.length > 0 ? (

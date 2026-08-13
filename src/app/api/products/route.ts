@@ -1,6 +1,56 @@
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 import { PRODUCTS } from "@/data/catalog";
 import type { Product } from "@/lib/types";
+
+// Convert a DB product record to the Product type used by the storefront
+function dbToProduct(p: any): Product {
+  return {
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    subtitle: p.subtitle || "",
+    description: p.description || "",
+    story: p.story || "",
+    price: p.price,
+    compareAtPrice: p.compareAtPrice || undefined,
+    currency: (p.currency as "INR") || "INR",
+    category: p.category,
+    collection: p.collection,
+    fabric: p.fabric || "",
+    fabricDetails: JSON.parse(p.fabricDetails || "[]"),
+    colors: JSON.parse(p.colors || "[]"),
+    sizes: JSON.parse(p.sizes || "[]"),
+    images: JSON.parse(p.images || "[]"),
+    rating: p.rating || 5,
+    reviewCount: p.reviewCount || 0,
+    reviews: [], // reviews not stored in DB yet — use static if needed
+    badges: JSON.parse(p.badges || "[]"),
+    featured: p.featured || false,
+    bestSeller: p.bestSeller || false,
+    newArrival: p.newArrival || false,
+    limitedEdition: p.limitedEdition || false,
+    stock: p.stock || 0,
+    sku: p.sku,
+    careInstructions: p.care || "",
+    shippingInfo: p.shipping || "",
+    tags: JSON.parse(p.tags || "[]"),
+    videoUrl: p.videoUrl || undefined,
+  };
+}
+
+async function getProductsFromDB(): Promise<Product[]> {
+  try {
+    const rows = await db.product.findMany({
+      where: { active: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return rows.map(dbToProduct);
+  } catch (e) {
+    console.error("[DB_PRODUCTS_FALLBACK]", e);
+    return [...PRODUCTS]; // fallback to static
+  }
+}
 
 export async function GET(request: Request) {
   try {
@@ -17,7 +67,7 @@ export async function GET(request: Request) {
     const maxPrice = searchParams.get("maxPrice");
     const sort = searchParams.get("sort");
 
-    let products: Product[] = [...PRODUCTS];
+    let products: Product[] = await getProductsFromDB();
 
     if (category) {
       products = products.filter((p) => p.category === category);
@@ -74,8 +124,8 @@ export async function GET(request: Request) {
   } catch (err) {
     console.error("[API_PRODUCTS_GET]", err);
     return NextResponse.json(
-      { error: "Failed to fetch products" },
-      { status: 500 }
+      { products: PRODUCTS, count: PRODUCTS.length },
+      { status: 200 }
     );
   }
 }
