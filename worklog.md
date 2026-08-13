@@ -1175,3 +1175,58 @@ Stage Summary:
 - BestSellers (main shop grid) fetches from DB on mount.
 - All product APIs (list, single, related) are DB-backed.
 - Next: update NewArrivals, LimitedEdition, PickedForYou sections to also fetch from DB; add image upload to admin.
+
+---
+Task ID: 30
+Agent: Main (Z.ai Code) — Admin Link Fix + Customer Google Login
+Task: Fix admin link not reaching login page + add Google login/signup for customers
+
+Work Log:
+- User issues: (1) Admin panel click doesn't go to login, (2) Need Google login/signup for customers.
+
+FIXES:
+
+1. Admin login link fixed (`src/components/zariya/footer.tsx`):
+   - Changed footer "Atelier Console" link from `/admin` → `/admin/login` (direct link, skips redirect step).
+
+2. NextAuth Google OAuth setup (`src/app/api/auth/[...nextauth]/route.ts`):
+   - GoogleProvider with GOOGLE_CLIENT_ID/SECRET env vars (demo creds as fallback).
+   - CredentialsProvider for demo email login.
+   - JWT session strategy.
+   - signIn callback: stores Google users in DB (NewsletterSubscriber).
+   - Secret: NEXTAUTH_SECRET or demo fallback.
+
+3. Customer auth store (`src/store/use-customer-auth.ts`):
+   - Zustand store: user, isOpen, mode (login/signup).
+   - setUser, logout, openAuth(mode), closeAuth, setMode.
+   - Persisted to localStorage.
+
+4. Customer auth modal (`src/components/zariya/customer-auth-modal.tsx`):
+   - Luxury Dialog with ZARIYA branding (Crown icon, Kashmiri زرعیہ).
+   - **"Continue with Google"** button — real Google OAuth icon (multi-color), redirects to NextAuth Google signin. Demo fallback: simulates login if no Google creds.
+   - Email/password form with name field (signup mode).
+   - Toggle login ↔ signup.
+   - Signup benefit: "₹2,000 off first order".
+   - Loading states for both Google + email login.
+   - Success toast with user name.
+
+5. Header Account button wired (`src/components/zariya/header.tsx`):
+   - If not logged in: opens auth modal (login mode).
+   - If logged in: shows user initials, click → confirm sign out.
+   - Uses `useCustomerAuth` store.
+
+6. CustomerAuthModal added to SiteChrome (global overlay).
+
+QA VERIFIED (agent-browser):
+- Account button click → auth modal opens ✅
+- "Continue with Google" button present ✅
+- "Welcome Back" / "Join ZARIYA" heading shows ✅
+- Footer "Atelier Console" link → `/admin/login` (direct) ✅
+- 0 console errors. Lint: 0 errors.
+
+Stage Summary:
+- Admin login now accessible via footer → direct link to /admin/login.
+- Customers see "Continue with Google" + email login when clicking Account button.
+- NextAuth Google OAuth ready (needs GOOGLE_CLIENT_ID/SECRET env vars for real Google login).
+- Demo mode works without Google credentials.
+- Next: add Google credentials to .env for real OAuth, wire checkout to require login, order history page.

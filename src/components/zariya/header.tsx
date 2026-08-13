@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useCurrency } from "@/store/use-currency";
+import { useCustomerAuth } from "@/store/use-customer-auth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -87,6 +88,19 @@ export function Header() {
   const setMenuOpen = useUI((s) => s.setMenuOpen);
   const currency = useCurrency((s) => s.currency);
   const setCurrency = useCurrency((s) => s.setCurrency);
+  const customerUser = useCustomerAuth((s) => s.user);
+  const openAuth = useCustomerAuth((s) => s.openAuth);
+  const customerLogout = useCustomerAuth((s) => s.logout);
+
+  const handleAccountClick = () => {
+    if (customerUser) {
+      if (confirm(`Signed in as ${customerUser.name}\n\nSign out?`)) {
+        customerLogout();
+      }
+    } else {
+      openAuth("login");
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -287,8 +301,18 @@ export function Header() {
           >
             <Heart className="h-[18px] w-[18px]" />
           </IconActionButton>
-          <IconActionButton label="Account" atTop={atTop}>
-            <User className="h-[18px] w-[18px]" />
+          <IconActionButton
+            label={customerUser ? customerUser.name : "Account"}
+            onClick={() => (customerUser ? handleAccountClick() : openAuth("login"))}
+            atTop={atTop}
+          >
+            {customerUser ? (
+              <span className="text-[10px] font-bold uppercase">
+                {customerUser.name.slice(0, 2)}
+              </span>
+            ) : (
+              <User className="h-[18px] w-[18px]" />
+            )}
           </IconActionButton>
           <IconActionButton
             label="Cart"

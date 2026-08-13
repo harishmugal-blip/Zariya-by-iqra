@@ -11,6 +11,7 @@ import { LiveChat } from "./live-chat";
 import { CompareBar } from "./compare-bar";
 import { CompareDrawer } from "./compare-drawer";
 import { WishlistImport } from "./wishlist-import";
+import { CustomerAuthModal } from "./customer-auth-modal";
 
 // Overlays — load lazily for fast initial paint
 const QuickView = dynamic(() => import("./quick-view"), { ssr: false });
@@ -45,6 +46,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <SizeGuideModal />
       <ReviewModal />
       <CompareDrawer />
+      <CustomerAuthModal />
     </div>
   );
 }
