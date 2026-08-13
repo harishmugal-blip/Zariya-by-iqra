@@ -52,50 +52,50 @@
 :root {
   --radius: 0.75rem;
 
-  /* Luxury ZARIYA Palette — Light Golden Cream + Black Text + White Outline */
-  --background: 38 40% 95%;            /* Warm golden cream — light, black text visible */
-  --foreground: 0 0% 5%;              /* BLACK text */
-  --card: 40 45% 98%;                 /* Lighter card */
-  --card-foreground: 0 0% 5%;
-  --popover: 40 45% 98%;
-  --popover-foreground: 0 0% 5%;
+  /* Luxury ZARIYA Palette — Original Ivory + Burgundy (restored) */
+  --background: 40 33% 97%;          /* Warm Ivory #FAF8F5 */
+  --foreground: 0 0% 8%;              /* Charcoal — slightly darker for highlight */
+  --card: 40 30% 99%;
+  --card-foreground: 0 0% 8%;
+  --popover: 40 30% 99%;
+  --popover-foreground: 0 0% 8%;
 
-  --primary: 38 55% 55%;             /* Royal Gold buttons */
-  --primary-foreground: 0 0% 5%;      /* Black text on gold */
+  --primary: 352 68% 17%;            /* Deep Burgundy #4A0E17 */
+  --primary-foreground: 40 33% 97%;
 
-  --secondary: 38 45% 88%;           /* Light gold tint */
-  --secondary-foreground: 0 0% 5%;
+  --secondary: 38 51% 56%;          /* Royal Gold #C5A059 */
+  --secondary-foreground: 0 0% 8%;
 
-  --muted: 38 30% 90%;               /* Light muted */
-  --muted-foreground: 0 0% 35%;      /* Dark grey muted text */
+  --muted: 40 20% 94%;
+  --muted-foreground: 0 0% 35%;      /* Darker muted for readability */
 
-  --accent: 38 55% 55%;              /* Royal Gold accent */
-  --accent-foreground: 0 0% 5%;
+  --accent: 43 56% 78%;              /* Soft Champagne Gold */
+  --accent-foreground: 352 68% 17%;
 
-  --destructive: 0 70% 45%;          /* Elegant Red */
-  --success: 152 56% 30%;            /* Emerald Green */
-  --gold: 38 55% 55%;                /* Royal Gold */
-  --gold-foreground: 0 0% 5%;         /* Black on gold */
+  --destructive: 0 70% 45%;         /* Elegant Red */
+  --success: 152 56% 30%;           /* Emerald Green */
+  --gold: 38 51% 56%;                /* Royal Gold */
+  --gold-foreground: 0 0% 8%;
   --champagne: 43 56% 78%;
 
-  --border: 0 0% 100%;               /* WHITE OUTLINE / BORDERS */
-  --input: 0 0% 100%;                /* White input borders */
-  --ring: 38 55% 55%;                /* Golden focus ring */
+  --border: 40 15% 88%;             /* Warm border */
+  --input: 40 15% 90%;
+  --ring: 38 51% 56%;
 
-  --chart-1: 38 55% 55%;
-  --chart-2: 43 56% 68%;
-  --chart-3: 352 68% 40%;
+  --chart-1: 352 68% 17%;
+  --chart-2: 38 51% 56%;
+  --chart-3: 43 56% 78%;
   --chart-4: 152 56% 30%;
   --chart-5: 0 70% 45%;
 
-  --sidebar: 40 45% 98%;
-  --sidebar-foreground: 0 0% 5%;
-  --sidebar-primary: 38 55% 55%;
-  --sidebar-primary-foreground: 0 0% 5%;
-  --sidebar-accent: 38 30% 90%;
-  --sidebar-accent-foreground: 0 0% 5%;
-  --sidebar-border: 0 0% 100%;
-  --sidebar-ring: 38 55% 55%;
+  --sidebar: 40 30% 99%;
+  --sidebar-foreground: 0 0% 8%;
+  --sidebar-primary: 352 68% 17%;
+  --sidebar-primary-foreground: 40 33% 97%;
+  --sidebar-accent: 40 20% 94%;
+  --sidebar-accent-foreground: 352 68% 17%;
+  --sidebar-border: 40 15% 88%;
+  --sidebar-ring: 38 51% 56%;
 }
 
 .dark {
@@ -145,10 +145,6 @@
     font-family: var(--font-playfair), Georgia, serif;
     letter-spacing: -0.01em;
   }
-  /* White borders with subtle shadow so they're visible on light background */
-  .rounded-2xl, .rounded-3xl, .rounded-xl, .border {
-    box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.9), 0 1px 3px hsl(38 55% 30% / 0.12);
-  }
 }
 
 /* Kashmiri / Arabic script for authentic glyphs */
@@ -158,6 +154,39 @@
     direction: rtl;
     unicode-bidi: isolate;
     line-height: 1.8;
+  }
+  /* Highlighted text — gold gradient text with subtle glow */
+  .text-highlight {
+    background: linear-gradient(135deg, hsl(352 68% 17%) 0%, hsl(352 68% 25%) 50%, hsl(38 51% 46%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: none;
+    font-weight: 700;
+  }
+  .text-highlight-gold {
+    background: linear-gradient(135deg, hsl(38 51% 56%) 0%, hsl(43 56% 68%) 50%, hsl(38 51% 46%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: 700;
+  }
+  /* Text underline highlight — gold underline accent */
+  .text-underline-gold {
+    position: relative;
+    display: inline-block;
+  }
+  .text-underline-gold::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 3px;
+    background: linear-gradient(90deg, hsl(38 51% 56%), hsl(43 56% 68%), transparent);
+    border-radius: 2px;
   }
 }
 

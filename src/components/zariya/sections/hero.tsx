@@ -116,6 +116,60 @@ export default function Hero() {
       <PaisleyMotif className="animate-float-slow pointer-events-none absolute bottom-[12%] left-[12%] h-20 w-16 text-gold/25 hidden md:block" />
       <PaisleyMotif className="animate-float-slower pointer-events-none absolute bottom-[18%] right-[14%] h-24 w-20 text-gold/20 hidden md:block" />
 
+      {/* Animated Kashmiri Model — floating showcase */}
+      <motion.div
+        initial={{ opacity: 0, x: 60, scale: 0.9 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-none absolute right-0 top-1/2 z-[5] hidden -translate-y-1/2 lg:block"
+      >
+        <div className="relative">
+          {/* Rotating gold ring */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute -inset-6 rounded-full border border-dashed border-gold/30"
+          />
+          {/* Gold glow */}
+          <div className="pointer-events-none absolute -inset-8 rounded-full bg-gold/15 blur-3xl" />
+
+          {/* Model image with breathing animation */}
+          <motion.div
+            animate={{ y: [0, -14, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative h-[70vh] max-h-[640px] w-[340px] overflow-hidden rounded-[200px] border-2 border-gold/40 shadow-2xl"
+          >
+            <img
+              src="/images/hero/hero-model-suit.png"
+              alt="ZARIYA model in hand-embroidered Kashmiri suit"
+              className="h-full w-full object-cover"
+            />
+            {/* Subtle gradient overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+          </motion.div>
+
+          {/* Floating badge — "Hand-Embroidered" */}
+          <motion.div
+            animate={{ y: [0, 10, 0], rotate: [0, 3, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -left-8 top-16 rounded-2xl glass border border-gold/30 px-4 py-3 luxury-shadow"
+          >
+            <p className="font-serif text-xs font-bold text-primary">Hand-Embroidered</p>
+            <p className="text-[10px] text-muted-foreground">150+ hrs · Aari & Sozni</p>
+          </motion.div>
+
+          {/* Floating badge — "Pure Pashmina" */}
+          <motion.div
+            animate={{ y: [0, -10, 0], rotate: [0, -3, 0] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            className="absolute -right-4 bottom-24 rounded-2xl glass border border-gold/30 px-4 py-3 luxury-shadow"
+          >
+            <p className="font-serif text-xs font-bold text-primary">Pure Pashmina</p>
+            <p className="text-[10px] text-muted-foreground">Grade-A · Kashmir</p>
+          </motion.div>
+        </div>
+      </motion.div>
+
       {/* Content */}
       <motion.div
         style={{ y: yContent, opacity: opacityContent }}
@@ -157,9 +211,9 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-shadow-lux font-serif text-4xl font-semibold leading-[1.05] text-ivory sm:text-5xl md:text-6xl lg:text-7xl"
+            className="text-shadow-lux font-serif text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            {slide.title}
+            <span className="text-highlight-gold">{slide.title}</span>
           </motion.h1>
         </AnimatePresence>
 

@@ -1002,3 +1002,53 @@ Stage Summary:
 - Theme is now LIGHT golden-cream background + BLACK text (visible) + WHITE outline/borders.
 - Gold buttons with black text for CTAs.
 - All components reverted to work with the light theme.
+
+---
+Task ID: 27
+Agent: Main (Z.ai Code) — Theme Restore + Animated Kashmiri Model + Text Highlight
+Task: Restore original theme, highlight text, add animated Kashmiri model in hero
+
+Work Log:
+- User request: "theem pehle jesi hi kardo bass text ko highlight kar dena, background me jo welcome page he vaha animated kardo ak model kasmiri suit pehne hua, deep thinking karke kardo kaam ko"
+- Restored ORIGINAL ivory + burgundy theme:
+  - `--background`: warm ivory (40 33% 97% → rgb(250,248,245))
+  - `--foreground`: charcoal, slightly darker (0 0% 8% → rgb(20,20,20)) for better contrast/highlight
+  - `--primary`: deep burgundy (352 68% 17%)
+  - `--secondary`/`--gold`: royal gold (38 51% 56%)
+  - `--border`: warm (40 15% 88%)
+  - Removed white-border box-shadow override.
+  - Darker `--muted-foreground` (0 0% 35%) for readability.
+
+- Added TEXT HIGHLIGHT utilities (`src/app/globals.css`):
+  - `.text-highlight` — burgundy-to-gold gradient text.
+  - `.text-highlight-gold` — royal gold gradient text (used on hero title).
+  - `.text-underline-gold` — gold underline accent.
+  - Applied `.text-highlight-gold` to hero h1 title → title now pops in gold gradient on the burgundy hero background.
+
+- Generated 3 new animated Kashmiri model images (768×1344 portrait):
+  - `hero-model-suit.png` — model in burgundy & gold embroidered Kashmiri suit.
+  - `hero-model-pheran.png` — model in flowing pheran.
+  - `hero-model-shawl.png` — model draped in pashmina shawl.
+
+- Added ANIMATED KASHMIRI MODEL to hero (`src/components/zariya/sections/hero.tsx`):
+  - Model image (hero-model-suit.png) on the RIGHT side of hero (desktop, lg:block).
+  - Breathing animation: gentle up-down float (y: 0 → -14 → 0, 5s loop).
+  - Rotating gold dashed ring around the model (30s linear loop).
+  - Gold glow halo behind the model (blurred gold).
+  - Pill-shaped crop (rounded-[200px]) with gold border + shadow.
+  - 2 floating glass badges: "Hand-Embroidered · 150+ hrs" + "Pure Pashmina · Grade-A" — each with independent float + slight rotate animation.
+  - Entrance: slide-in from right (1.2s, delay 0.5s).
+  - Gradient overlay for depth.
+
+QA VERIFIED (agent-browser):
+- Background: rgb(250, 248, 245) — warm ivory restored ✅
+- Text: rgb(20, 20, 20) — dark charcoal, visible ✅
+- Model image (hero-model-suit.png): found ✅
+- Gold highlight title (.text-highlight-gold): found ✅
+- 0 console errors, 0 page errors. Lint: 0 errors.
+
+Stage Summary:
+- ORIGINAL theme restored (ivory + burgundy + gold).
+- Text now HIGHLIGHTED with gold gradient on hero title.
+- Animated Kashmiri model in suit added to hero — floating, rotating gold ring, glow, badges.
+- All 3 model images generated for future use (suit, pheran, shawl).
