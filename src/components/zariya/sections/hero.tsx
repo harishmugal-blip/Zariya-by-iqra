@@ -237,7 +237,7 @@ export default function Hero() {
           className="mt-10 flex flex-col gap-4 sm:flex-row"
         >
           <a
-            href="#shop"
+            href="/store"
             className="group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full border border-gold bg-gold/10 px-8 text-sm font-semibold uppercase tracking-[0.15em] text-gold backdrop-blur-md transition-all duration-500 hover:bg-gold hover:text-charcoal"
           >
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold/30 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
