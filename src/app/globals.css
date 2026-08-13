@@ -4,44 +4,44 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
   --font-mono: var(--font-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-gold: var(--gold);
-  --color-gold-foreground: var(--gold-foreground);
-  --color-champagne: var(--champagne);
-  --color-success: var(--success);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-ring: hsl(var(--ring));
+  --color-input: hsl(var(--input));
+  --color-border: hsl(var(--border));
+  --color-destructive: hsl(var(--destructive));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card: hsl(var(--card));
+  --color-gold: hsl(var(--gold));
+  --color-gold-foreground: hsl(var(--gold-foreground));
+  --color-champagne: hsl(var(--champagne));
+  --color-success: hsl(var(--success));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -52,50 +52,50 @@
 :root {
   --radius: 0.75rem;
 
-  /* Luxury ZARIYA Palette */
-  --background: 40 33% 97%;          /* Warm Ivory #FAF8F5 */
-  --foreground: 0 0% 12%;            /* Charcoal #1E1E1E */
-  --card: 40 30% 99%;
-  --card-foreground: 0 0% 12%;
-  --popover: 40 30% 99%;
-  --popover-foreground: 0 0% 12%;
+  /* Luxury ZARIYA Palette — Dark Black-Golden */
+  --background: 38 30% 6%;            /* Black-Golden Mix — very dark */
+  --foreground: 40 25% 92%;           /* Warm Ivory text */
+  --card: 38 25% 9%;                  /* Dark card */
+  --card-foreground: 40 25% 92%;
+  --popover: 38 25% 9%;
+  --popover-foreground: 40 25% 92%;
 
-  --primary: 352 68% 17%;            /* Deep Burgundy #4A0E17 */
-  --primary-foreground: 40 33% 97%;
+  --primary: 38 55% 55%;             /* Royal Gold as primary */
+  --primary-foreground: 38 30% 6%;    /* Black text on gold */
 
-  --secondary: 38 51% 56%;          /* Royal Gold #C5A059 */
-  --secondary-foreground: 0 0% 12%;
+  --secondary: 38 35% 16%;           /* Dark gold-brown */
+  --secondary-foreground: 40 25% 92%;
 
-  --muted: 40 20% 94%;
-  --muted-foreground: 0 0% 40%;
+  --muted: 38 20% 13%;               /* Dark muted */
+  --muted-foreground: 38 18% 62%;    /* Light muted text */
 
-  --accent: 43 56% 78%;              /* Soft Champagne Gold */
-  --accent-foreground: 352 68% 17%;
+  --accent: 38 55% 55%;              /* Royal Gold accent */
+  --accent-foreground: 38 30% 6%;
 
-  --destructive: 0 70% 45%;         /* Elegant Red */
-  --success: 152 56% 30%;           /* Emerald Green */
-  --gold: 38 51% 56%;                /* Royal Gold */
-  --gold-foreground: 0 0% 12%;
-  --champagne: 43 56% 78%;
+  --destructive: 0 70% 45%;          /* Elegant Red */
+  --success: 152 56% 40%;            /* Emerald Green */
+  --gold: 38 55% 55%;                /* Royal Gold */
+  --gold-foreground: 38 30% 6%;       /* Black on gold */
+  --champagne: 43 56% 68%;
 
-  --border: 40 15% 90%;
-  --input: 40 15% 90%;
-  --ring: 38 51% 56%;
+  --border: 38 45% 35%;              /* GOLDEN OUTLINE — visible gold */
+  --input: 38 30% 14%;               /* Dark input with gold tint */
+  --ring: 38 55% 55%;                /* Golden focus ring */
 
-  --chart-1: 352 68% 17%;
-  --chart-2: 38 51% 56%;
-  --chart-3: 43 56% 78%;
-  --chart-4: 152 56% 30%;
-  --chart-5: 0 70% 45%;
+  --chart-1: 38 55% 55%;
+  --chart-2: 43 56% 68%;
+  --chart-3: 352 68% 50%;
+  --chart-4: 152 56% 40%;
+  --chart-5: 0 70% 50%;
 
-  --sidebar: 40 30% 99%;
-  --sidebar-foreground: 0 0% 12%;
-  --sidebar-primary: 352 68% 17%;
-  --sidebar-primary-foreground: 40 33% 97%;
-  --sidebar-accent: 40 20% 94%;
-  --sidebar-accent-foreground: 352 68% 17%;
-  --sidebar-border: 40 15% 90%;
-  --sidebar-ring: 38 51% 56%;
+  --sidebar: 38 25% 9%;
+  --sidebar-foreground: 40 25% 92%;
+  --sidebar-primary: 38 55% 55%;
+  --sidebar-primary-foreground: 38 30% 6%;
+  --sidebar-accent: 38 20% 13%;
+  --sidebar-accent-foreground: 40 25% 92%;
+  --sidebar-border: 38 45% 35%;
+  --sidebar-ring: 38 55% 55%;
 }
 
 .dark {

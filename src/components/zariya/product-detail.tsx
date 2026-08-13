@@ -262,7 +262,7 @@ export default function ProductDetail() {
               {/* Decorative video play */}
               <button
                 aria-label="Play video"
-                className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-white/85 text-primary shadow-md backdrop-blur-md transition-transform hover:scale-110"
+                className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-background/85 text-gold shadow-md backdrop-blur-md transition-transform hover:scale-110"
               >
                 <Play className="h-4 w-4 fill-current" />
               </button>
