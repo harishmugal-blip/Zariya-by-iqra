@@ -11,6 +11,7 @@ import {
   Menu,
   Sparkles,
   ArrowRight,
+  Lock,
 } from "lucide-react";
 import { useCurrency } from "@/store/use-currency";
 import { useCustomerAuth } from "@/store/use-customer-auth";
@@ -322,6 +323,20 @@ export function Header() {
           >
             <ShoppingBag className="h-[18px] w-[18px]" />
           </IconActionButton>
+
+          {/* Admin Login button — separate, always visible */}
+          <Link
+            href="/admin/login"
+            className={cn(
+              "ml-1 hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all sm:flex",
+              atTop
+                ? "border-gold/40 bg-gold/10 text-gold hover:bg-gold hover:text-primary"
+                : "border-gold/40 bg-gold/10 text-gold hover:bg-gold hover:text-primary"
+            )}
+          >
+            <Lock className="h-3 w-3" />
+            Admin
+          </Link>
         </div>
       </div>
 
