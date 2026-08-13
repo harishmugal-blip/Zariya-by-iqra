@@ -885,3 +885,52 @@ Stage Summary:
 - Compare drawer now horizontally scrollable on mobile with comfortable column widths.
 - All existing mobile features (product detail, cart, checkout, search, admin) verified working on 390px viewport.
 - Next round opportunities: AR try-on, live inventory badges, price-drop email integration, personalized email capture, currency-aware checkout.
+
+---
+Task ID: 24
+Agent: Main (Z.ai Code) — Kashmiri Glyphs on Landing Page
+Task: Add authentic Kashmiri script (Nastaliq/Naskh) glyphs to the landing page
+
+Work Log:
+- User request: "landing page font Kashmiri Glyphs" — add Kashmiri script/glyphs to the landing page.
+- Added **Noto Naskh Arabic** Google Font (supports Kashmiri Perso-Arabic script) to layout.tsx.
+- Added `.font-kashmiri` CSS utility (rtl direction, Naskh + Nastaliq fallback, line-height 1.8).
+- Added authentic Kashmiri script text to 5 locations across the landing page:
+
+KASHMIRI GLYPHS ADDED:
+
+1. Hero section (`src/components/zariya/sections/hero.tsx`):
+   - **زرعیہ** (ZARIYA) — brand name in Kashmiri script, displayed above the eyebrow in gold (text-3xl → 5xl responsive), fade-in animation.
+   - **کشمیری دستکاری · ازل تا ابد** (Kashmiri craftsmanship · eternal) — tagline below the CTA buttons in ivory/50.
+
+2. Announcement bar (`src/components/zariya/announcement-bar.tsx`):
+   - 4 rotating Kashmiri accents shown alongside English messages (sm+ only):
+     - **خوش آمدید** (Welcome)
+     - **کشمیر · ۲۰۰۹** (Kashmir · 2009)
+     - **زرعیہ** (ZARIYA)
+     - **دستکاری** (Craftsmanship)
+
+3. Footer (`src/components/zariya/footer.tsx`):
+   - **زرعیہ** displayed before the "ZARIYA" wordmark in the top band, in gold/80.
+
+4. Artisan story section (`src/components/zariya/sections/artisan-story.tsx`):
+   - **کشمیر میں ہاتھ سے بنی** (Handmade in Kashmir) — below the "Handcrafted in Kashmir" h2, in gold/70.
+
+FONT SETUP:
+- `src/app/layout.tsx`: imported `Noto_Naskh_Arabic` from next/font/google, variable `--font-naskh`, arabic subset, weights 400-700, display swap.
+- `src/app/globals.css`: added `.font-kashmiri` utility with `direction: rtl`, `unicode-bidi: isolate`, Naskh + Nastaliq fallback fonts.
+
+QA VERIFIED (agent-browser):
+- Brand name زرعیہ renders in hero ✅
+- Tagline کشمیری دستکاری renders in hero ✅
+- 5 elements with .font-kashmiri class (hero×2, announcement, footer, artisan story) ✅
+- Computed font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif ✅
+- Artisan story Kashmiri text (کشمیر میں ہاتھ سے بنی) renders ✅
+- Footer Kashmiri (زرعیہ) renders ✅
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Authentic Kashmiri script (Naskh) now renders across 4 key areas of the landing page.
+- Brand name, tagline, announcement accents, footer wordmark, and artisan story all have Kashmiri glyphs.
+- Font properly loads via next/font with arabic subset + display swap for performance.
+- Next round opportunities: add Kashmiri to product names/details, journal articles, checkout success screen.

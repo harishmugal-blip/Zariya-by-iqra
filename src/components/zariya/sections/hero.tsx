@@ -121,6 +121,18 @@ export default function Hero() {
         style={{ y: yContent, opacity: opacityContent }}
         className="relative z-10 mx-auto flex min-h-[88vh] max-w-4xl flex-col items-center justify-center px-6 py-24 text-center"
       >
+        {/* Kashmiri script brand name */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-4"
+        >
+          <span className="font-kashmiri text-3xl font-medium text-gold/90 sm:text-4xl md:text-5xl">
+            زرعیہ
+          </span>
+        </motion.div>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={`eyebrow-${index}`}
@@ -187,6 +199,16 @@ export default function Hero() {
             Order on WhatsApp
           </a>
         </motion.div>
+
+        {/* Kashmiri script tagline */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="font-kashmiri mt-8 text-sm text-ivory/50 sm:text-base"
+        >
+          کشمیری دستکاری · ازل تا ابد
+        </motion.p>
       </motion.div>
 
       {/* Slide indicators */}

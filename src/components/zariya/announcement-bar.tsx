@@ -11,6 +11,14 @@ const MESSAGES = [
   "Each piece takes 150+ hours of artisan needlework",
 ];
 
+// Kashmiri script accents shown alongside messages
+const KASHMIRI_ACCENTS = [
+  "خوش آمدید", // Welcome
+  "کشمیر · ۲۰۰۹", // Kashmir · 2009
+  "زرعیہ", // ZARIYA
+  "دستکاری", // Craftsmanship
+];
+
 const ROTATE_MS = 4000;
 
 export function AnnouncementBar() {
@@ -44,10 +52,13 @@ export function AnnouncementBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 flex items-center justify-center gap-2 uppercase"
+            className="absolute inset-0 flex items-center justify-center gap-2.5 uppercase"
           >
             <Sparkles className="h-3 w-3 shrink-0 text-gold sm:hidden" />
             <span className="truncate">{MESSAGES[index]}</span>
+            <span className="font-kashmiri hidden text-gold/60 sm:inline">
+              {KASHMIRI_ACCENTS[index]}
+            </span>
           </motion.span>
         </AnimatePresence>
       </div>

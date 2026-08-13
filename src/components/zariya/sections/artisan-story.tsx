@@ -89,6 +89,9 @@ export default function ArtisanStory() {
             <h2 className="font-serif text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
               Handcrafted in Kashmir
             </h2>
+            <p className="font-kashmiri mt-2 text-xl text-gold/70 sm:text-2xl">
+              کشمیر میں ہاتھ سے بنی
+            </p>
 
             <div className="mt-6 space-y-4 text-sm text-foreground/80 md:text-base">
               <p>

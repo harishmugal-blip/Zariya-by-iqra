@@ -147,6 +147,16 @@
   }
 }
 
+/* Kashmiri / Arabic script for authentic glyphs */
+@layer utilities {
+  .font-kashmiri {
+    font-family: var(--font-naskh), "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    direction: rtl;
+    unicode-bidi: isolate;
+    line-height: 1.8;
+  }
+}
+
 /* Luxury utilities */
 @layer utilities {
   .font-serif {

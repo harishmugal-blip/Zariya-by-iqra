@@ -97,7 +97,10 @@ export function Footer() {
       {/* Top band */}
       <div className="border-b border-gold/15">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-10 text-center sm:px-6 lg:px-8">
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-3">
+            <span className="font-kashmiri text-2xl text-gold/80 sm:text-3xl">
+              زرعیہ
+            </span>
             <span className="font-serif text-3xl font-bold tracking-tight">
               {BRAND.name}
             </span>
