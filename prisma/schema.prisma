@@ -9,6 +9,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // hashed
+  role      String   @default("ADMIN") // ADMIN, SUPER_ADMIN
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  subtitle        String
+  description     String
+  story           String
+  price           Int
+  compareAtPrice  Int?
+  currency        String   @default("INR")
+  category        String   // category slug
+  collection      String
+  fabric          String
+  fabricDetails   String   // JSON
+  colors          String   // JSON
+  sizes           String   // JSON
+  images          String   // JSON
+  rating          Float    @default(5)
+  reviewCount     Int      @default(0)
+  badges          String   @default("[]") // JSON
+  featured        Boolean  @default(false)
+  bestSeller      Boolean  @default(false)
+  newArrival      Boolean  @default(false)
+  limitedEdition  Boolean  @default(false)
+  stock           Int      @default(0)
+  sku             String
+  care            String
+  shipping        String
+  tags            String   @default("[]") // JSON
+  videoUrl        String?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  description  String
+  image        String
+  icon         String
+  active      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  tagline     String
+  description String
+  image       String
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Coupon {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  type       String   // percent | fixed
+  value      Int
+  minOrder   Int      @default(0)
+  description String
+  active     Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
 model Order {
   id            String      @id @default(cuid())
   orderNumber   String      @unique

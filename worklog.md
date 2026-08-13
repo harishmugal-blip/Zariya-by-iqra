@@ -1052,3 +1052,83 @@ Stage Summary:
 - Text now HIGHLIGHTED with gold gradient on hero title.
 - Animated Kashmiri model in suit added to hero — floating, rotating gold ring, glow, badges.
 - All 3 model images generated for future use (suit, pheran, shawl).
+
+---
+Task ID: 28
+Agent: Main (Z.ai Code) — Real Admin System with Auth + Product CRUD
+Task: Build real admin panel with login, product management, inventory control
+
+Work Log:
+- User request: "shuru karo" — build a real admin system for managing inventory, products, orders without code changes.
+- Built complete admin management system:
+
+1. DATABASE SCHEMA (`prisma/schema.prisma`):
+   - Added `AdminUser` model (email, password hashed, name, role).
+   - Added `Product` model (full fields: slug, name, price, stock, images, colors, sizes, etc. — all JSON fields stored as strings).
+   - Added `Category`, `Collection`, `Coupon` models.
+   - Ran `bun run db:push` — DB synced.
+
+2. SEED SCRIPT (`scripts/seed.ts`):
+   - Migrated 12 products, 5 categories, 3 collections, 3 coupons from static catalog to DB.
+   - Created admin user: admin@zariya.com / zariya123 (SHA-256 hashed password).
+   - Ran successfully — all data in DB.
+
+3. ADMIN AUTH (`src/lib/admin-auth.ts` + 3 API routes):
+   - `verifyAdmin(email, password)` — checks against DB with hashed password.
+   - `createSessionToken` / `verifySessionToken` — signed token (base64 + SHA-256 signature).
+   - `getSession(req)` — reads cookie from request.
+   - `/api/admin/auth/login` (POST) — validates credentials, sets HttpOnly cookie.
+   - `/api/admin/auth/logout` (POST) — clears cookie.
+   - `/api/admin/auth/me` (GET) — checks if authenticated.
+   - All admin APIs now check `getSession()` and return 401 if not authenticated.
+
+4. ADMIN LOGIN PAGE (`/admin/login`):
+   - Luxury burgundy login page with gold accents.
+   - Email + password fields with show/hide password toggle.
+   - Auto-redirects to `/admin` if already logged in.
+   - Demo credentials hint shown.
+   - Back to Storefront link.
+
+5. ADMIN DASHBOARD UPDATED (`/admin`):
+   - **Auth gate**: checks `/api/admin/auth/me` on mount, redirects to `/admin/login` if not authenticated.
+   - **Logout button** in header (clears session).
+   - **Admin name** shown in header.
+   - All API calls use `credentials: "include"` for cookie auth.
+
+6. PRODUCT CRUD APIs (`/api/admin/products`):
+   - GET — list all products from DB (auth required).
+   - POST — create new product (auth required).
+   - PATCH — update product (auth required).
+   - DELETE — delete product by id (auth required).
+
+7. PRODUCT MANAGEMENT UI (ProductsTab):
+   - Reads products from DB (not static catalog).
+   - **Add Product** button → opens full product form modal.
+   - **Edit** button on each product → opens form pre-filled.
+   - **Delete** button with confirmation.
+   - **Quick stock editor** — inline stock number input, updates on blur.
+   - Search by name/SKU/category.
+   - Product form modal: name, slug, subtitle, description, price, compareAt, stock, category, collection, fabric, SKU, image URLs (multi-line), sizes, colors (name:hex), care, shipping, badges (featured/bestseller/new/limited).
+
+QA VERIFIED (agent-browser + curl):
+- `/admin` without login → redirects to `/admin/login` ✅
+- Login API: correct credentials → success + cookie set ✅
+- Login API: wrong password → "Invalid email or password" ✅
+- Products API without auth → 401 ✅
+- Browser login: admin@zariya.com / zariya123 → redirected to /admin ✅
+- Overview page loads ✅
+- Products tab: 12 products loaded from DB ✅
+- "Add Product" button present ✅
+- 0 console errors. Lint: 0 errors.
+
+ADMIN CREDENTIALS:
+  Email:    admin@zariya.com
+  Password: zariya123
+  URL:      /admin/login
+
+Stage Summary:
+- Real admin system with login authentication.
+- Products now stored in database — add, edit, delete, update stock from admin UI.
+- All admin APIs protected with auth (401 without login).
+- Storefront still reads from static catalog (fast) — can be switched to DB later.
+- Next: switch storefront to read from DB, add category/coupon management, image upload.
