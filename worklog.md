@@ -835,3 +835,53 @@ Stage Summary:
 - New **advanced search filters** (category chips + price slider + clear) in search overlay.
 - New **full 360° product viewer** with drag-to-rotate + auto-spin + frame indicator.
 - Next round opportunities: AR try-on, live inventory badges throughout, price-drop email integration, personalized email capture, product video showcase, more artisan content, currency-aware checkout.
+
+---
+Task ID: 23
+Agent: Main (Z.ai Code) — Mobile-Friendly Fixes
+Task: Fix mobile layout issues — floating button overlaps, compare drawer mobile grid, search filter responsiveness
+
+Work Log:
+- User request: "fix error or ise mobile friendly bana do" (fix errors / make mobile friendly).
+- Ran agent-browser QA on mobile viewport (390x844, iPhone 14 size):
+  - Homepage: 20 h2 sections render, no horizontal overflow, no console errors.
+  - Product detail modal: fits at 370px width on 390px viewport.
+  - Cart drawer: works, no overflow.
+  - Search overlay: filters work, no overflow.
+  - Checkout modal: works, no overflow.
+  - Admin dashboard: works on mobile, no overflow.
+  - Hero text: h1 at 36px (good for mobile).
+  - Celebrity carousel: 300px cards on 390px viewport (good with snap scroll).
+- Found & fixed mobile issues:
+
+FIXES:
+
+1. Floating button overlap on mobile (`micro-interactions.tsx`, `whatsapp-fab.tsx`, `live-chat.tsx`, `compare-bar.tsx`):
+   - PROBLEM: Back-to-top, WhatsApp FAB, live chat launcher, and compare bar were all at `bottom-20` (80px) on mobile, overlapping with each other and the mobile bottom nav (which has safe-area padding, ~84px tall).
+   - FIX: Repositioned all floating buttons on mobile:
+     - WhatsApp FAB: `bottom-20` → `bottom-24` (96px, clears mobile nav)
+     - Live chat launcher: `bottom-20` → `bottom-24` (96px, left side)
+     - Compare bar: `bottom-20` → `bottom-24` (96px, centered)
+     - Back-to-top: moved to `bottom-44` (176px) on mobile — stacks above the WhatsApp FAB which is at bottom-24+56px height=152px
+   - Desktop positions unchanged (lg:bottom-6 / lg:bottom-24).
+   - Live chat panel: `bottom-36` (144px) aligns with launcher top.
+   - Verified: no overlap between any floating buttons on mobile or desktop.
+
+2. Compare drawer mobile grid (`compare-drawer.tsx`):
+   - PROBLEM: Grid used fixed `140px` label column + `1fr` product columns, which on mobile (390px) with 2 products = 140+2×125=390px — barely fitting, and the product columns were too narrow.
+   - FIX:
+     - Reduced label column from `140px` → `110px`.
+     - Changed product columns from `1fr` → `minmax(150px, 1fr)` so they don't shrink below 150px.
+     - Added `overflow-x-auto scrollbar-lux` to both the header grid and spec rows grid, so the table scrolls horizontally on mobile instead of being cramped.
+   - Now mobile users can swipe to see all comparison columns comfortably.
+
+QA VERIFIED (agent-browser):
+- Mobile (390x844): All floating buttons at distinct positions (back-to-top at 668px from top = 176px from bottom, WhatsApp at 748px = 96px, live chat at 748px = 96px on left, mobile nav at 844px). No overlap.
+- Desktop (1440x900): Back-to-top at lg:bottom-24 (96px), WhatsApp FAB at lg:bottom-6 (24px). No overlap.
+- 0 console errors, 0 page errors. Lint: 0 errors, 0 warnings.
+
+Stage Summary:
+- Mobile layout significantly improved — no more floating button overlaps.
+- Compare drawer now horizontally scrollable on mobile with comfortable column widths.
+- All existing mobile features (product detail, cart, checkout, search, admin) verified working on 390px viewport.
+- Next round opportunities: AR try-on, live inventory badges, price-drop email integration, personalized email capture, currency-aware checkout.

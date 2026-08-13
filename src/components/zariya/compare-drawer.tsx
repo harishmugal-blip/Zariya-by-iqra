@@ -74,7 +74,7 @@ export function CompareDrawer() {
         ) : (
           <div className="py-4">
             {/* Product headers */}
-            <div className="mb-2 grid gap-3" style={{ gridTemplateColumns: `140px repeat(${products.length}, 1fr)` }}>
+            <div className="mb-2 grid gap-3 overflow-x-auto scrollbar-lux pb-2" style={{ gridTemplateColumns: `110px repeat(${products.length}, minmax(150px, 1fr))` }}>
               <div />
               {products.map((p) => (
                 <div key={p.id} className="relative">
@@ -124,7 +124,7 @@ export function CompareDrawer() {
             </div>
 
             {/* Spec rows */}
-            <div className="space-y-0 overflow-hidden rounded-2xl border border-border">
+            <div className="space-y-0 overflow-x-auto scrollbar-lux rounded-2xl border border-border">
               {rows.map((row, ri) => (
                 <div
                   key={row.label}
@@ -132,7 +132,7 @@ export function CompareDrawer() {
                     "grid items-center gap-3 border-b border-border/60 px-3 py-3 last:border-b-0",
                     ri % 2 === 0 ? "bg-card" : "bg-muted/30"
                   )}
-                  style={{ gridTemplateColumns: `140px repeat(${products.length}, 1fr)` }}
+                  style={{ gridTemplateColumns: `110px repeat(${products.length}, minmax(150px, 1fr))` }}
                 >
                   <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {row.label}

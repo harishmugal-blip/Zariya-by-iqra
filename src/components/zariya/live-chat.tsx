@@ -74,7 +74,7 @@ export function LiveChat() {
         whileTap={{ scale: 0.92 }}
         onClick={() => setOpen((v) => !v)}
         aria-label="Open concierge chat"
-        className="fixed bottom-20 left-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground luxury-shadow-lg lg:bottom-6 lg:left-6"
+        className="fixed bottom-24 left-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground luxury-shadow-lg lg:bottom-6 lg:left-6"
       >
         <AnimatePresence mode="wait">
           {open ? (
