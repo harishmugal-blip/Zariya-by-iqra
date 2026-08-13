@@ -121,10 +121,10 @@ export function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: LUX_EASE }}
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-all duration-500",
+        "sticky top-0 z-40 transition-all duration-500",
         scrolled
           ? "glass luxury-shadow border-b border-gold/15"
-          : "bg-transparent border-b border-transparent"
+          : "bg-primary border-b border-gold/10"
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
