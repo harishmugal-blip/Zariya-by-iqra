@@ -44,6 +44,7 @@ import {
   RotateCcw,
   UserCheck,
   Crown,
+  Instagram,
 } from "lucide-react";
 import Link from "next/link";
 import { PRODUCTS, CATEGORIES, COUPONS, BRAND } from "@/data/catalog";
@@ -271,6 +272,12 @@ export default function AdminPage() {
               className="flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-slate-300 transition-all hover:border-gold/50 hover:text-gold"
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Storefront
+            </Link>
+            <Link
+              href="/admin/instagram"
+              className="flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-3 py-1.5 text-xs font-medium text-pink-300 transition-all hover:bg-pink-500/20"
+            >
+              <Instagram className="h-3.5 w-3.5" /> Instagram
             </Link>
             <button
               onClick={handleLogout}
