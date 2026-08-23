@@ -104,17 +104,19 @@ export default function Hero() {
             />
           </motion.div>
         </AnimatePresence>
-        {/* Overlay gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/35 to-primary/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/60 via-transparent to-primary/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        {/* Overlay gradients — enhanced for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/50 to-primary/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/70 via-primary/30 to-primary/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-primary/30" />
+        {/* Radial gradient behind text for extra contrast */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(74,14,23,0.5) 0%, transparent 70%)" }} />
       </motion.div>
 
       {/* Floating paisley motifs */}
-      <PaisleyMotif className="animate-float-slow pointer-events-none absolute left-[4%] top-[14%] h-28 w-20 text-gold/40 md:h-40 md:w-28" />
-      <PaisleyMotif className="animate-float-slower pointer-events-none absolute right-[6%] top-[22%] h-24 w-20 text-gold/30 md:h-36 md:w-28" />
-      <PaisleyMotif className="animate-float-slow pointer-events-none absolute bottom-[12%] left-[12%] h-20 w-16 text-gold/25 hidden md:block" />
-      <PaisleyMotif className="animate-float-slower pointer-events-none absolute bottom-[18%] right-[14%] h-24 w-20 text-gold/20 hidden md:block" />
+      <PaisleyMotif className="animate-float-slow pointer-events-none absolute left-[4%] top-[14%] h-28 w-20 text-gold/10 md:h-40 md:w-28" />
+      <PaisleyMotif className="animate-float-slower pointer-events-none absolute right-[6%] top-[22%] h-24 w-20 text-gold/15 md:h-36 md:w-28" />
+      <PaisleyMotif className="animate-float-slow pointer-events-none absolute bottom-[12%] left-[12%] h-20 w-16 text-gold/10 hidden md:block" />
+      <PaisleyMotif className="animate-float-slower pointer-events-none absolute bottom-[18%] right-[14%] h-24 w-20 text-gold/10 hidden md:block" />
 
       {/* Animated Kashmiri Model — floating showcase */}
       <motion.div
@@ -154,7 +156,7 @@ export default function Hero() {
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className="absolute -left-8 top-16 rounded-2xl glass border border-gold/30 px-4 py-3 luxury-shadow"
           >
-            <p className="font-serif text-xs font-bold text-primary">Hand-Embroidered</p>
+            <p className="font-serif text-xs font-bold text-foreground">Hand-Embroidered</p>
             <p className="text-[10px] text-muted-foreground">150+ hrs · Aari & Sozni</p>
           </motion.div>
 
@@ -164,7 +166,7 @@ export default function Hero() {
             transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
             className="absolute -right-4 bottom-24 rounded-2xl glass border border-gold/30 px-4 py-3 luxury-shadow"
           >
-            <p className="font-serif text-xs font-bold text-primary">Pure Pashmina</p>
+            <p className="font-serif text-xs font-bold text-foreground">Pure Pashmina</p>
             <p className="text-[10px] text-muted-foreground">Grade-A · Kashmir</p>
           </motion.div>
         </div>
@@ -182,7 +184,7 @@ export default function Hero() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-4"
         >
-          <span className="font-kashmiri text-3xl font-medium text-gold/90 sm:text-4xl md:text-5xl">
+          <span className="font-kashmiri text-3xl font-medium sm:text-4xl md:text-5xl" style={{ color: "#B89A5A" }}>
             زرعیہ
           </span>
         </motion.div>
@@ -196,11 +198,11 @@ export default function Hero() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="mb-6 flex items-center gap-3"
           >
-            <span className="h-px w-8 bg-gold/70" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">
+            <span className="h-px w-8" style={{ backgroundColor: "#B89A5A" }} />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: "#B89A5A" }}>
               {slide.eyebrow}
             </span>
-            <span className="h-px w-8 bg-gold/70" />
+            <span className="h-px w-8" style={{ backgroundColor: "#B89A5A" }} />
           </motion.div>
         </AnimatePresence>
 
@@ -212,8 +214,9 @@ export default function Hero() {
             exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-shadow-lux font-serif text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
+            style={{ color: "#F3EBDD" }}
           >
-            <span className="text-highlight-gold">{slide.title}</span>
+            {slide.title}
           </motion.h1>
         </AnimatePresence>
 
@@ -224,7 +227,8 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-6 max-w-2xl text-balance text-base text-ivory/85 sm:text-lg md:text-xl"
+            className="mt-6 max-w-xl text-balance text-base sm:text-lg md:text-xl"
+            style={{ color: "#E8DED0" }}
           >
             {slide.subtitle}
           </motion.p>
@@ -236,18 +240,22 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="mt-10 flex flex-col gap-4 sm:flex-row"
         >
+          {/* Primary CTA — solid gold with dark text for max contrast */}
           <a
             href="/store"
-            className="group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full border border-gold bg-gold/10 px-8 text-sm font-semibold uppercase tracking-[0.15em] text-gold backdrop-blur-md transition-all duration-500 hover:bg-gold hover:text-charcoal"
+            className="btn-shimmer group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-8 text-sm font-semibold uppercase tracking-[0.15em] transition-all duration-500 hover:scale-105"
+            style={{ backgroundColor: "#B89A5A", color: "#1E1E1E" }}
           >
-            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold/30 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
             Shop Collection
           </a>
+          {/* Secondary CTA — ivory outline with ivory text */}
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-emerald/40 bg-emerald/15 px-8 text-sm font-semibold uppercase tracking-[0.15em] text-emerald-100 backdrop-blur-md transition-all duration-500 hover:bg-emerald hover:text-white"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full border-2 px-8 text-sm font-semibold uppercase tracking-[0.15em] backdrop-blur-md transition-all duration-500 hover:bg-white/10"
+            style={{ borderColor: "#F3EBDD", color: "#F3EBDD" }}
           >
             <MessageCircle className="h-4 w-4" />
             Order on WhatsApp
@@ -259,7 +267,8 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="font-kashmiri mt-8 text-sm text-ivory/50 sm:text-base"
+          className="font-kashmiri mt-8 text-sm sm:text-base"
+          style={{ color: "#C9BDB5" }}
         >
           کشمیری دستکاری · ازل تا ابد
         </motion.p>
