@@ -11,13 +11,16 @@ import { ChevronDown, MessageCircle } from "lucide-react";
 import { BRAND } from "@/data/catalog";
 import { cn, whatsappLink } from "@/lib/utils";
 
-const SLIDES = [
+const STATIC_SLIDES = [
   {
     image: "/images/hero/hero-1.png",
     eyebrow: "Handcrafted in Kashmir · Estd. 2009",
     title: "Timeless Kashmiri Elegance",
     subtitle:
       "Heirloom pherans, pashmina shawls and embroidered suits — each piece, a quiet act of devotion.",
+    badge: null as string | null,
+    buttonText: "Shop Collection",
+    buttonLink: "/store",
   },
   {
     image: "/images/hero/hero-2.png",
@@ -25,6 +28,9 @@ const SLIDES = [
     title: "Wear the Heritage of the Valley",
     subtitle:
       "From the looms of Srinagar to your wardrobe — fashion that carries 150 years of artisan lineage.",
+    badge: "New Arrival" as string | null,
+    buttonText: "Shop Collection",
+    buttonLink: "/store",
   },
   {
     image: "/images/hero/hero-3.png",
@@ -32,6 +38,9 @@ const SLIDES = [
     title: "Every Thread, A Story",
     subtitle:
       "Hand-embroidered aari & sozni, woven one stitch at a time by master Kashmiri artisans.",
+    badge: "Coming Soon" as string | null,
+    buttonText: "Shop Collection",
+    buttonLink: "/store",
   },
 ];
 
@@ -64,17 +73,28 @@ function PaisleyMotif({ className }: { className?: string }) {
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
+  const [slides, setSlides] = useState(STATIC_SLIDES);
+
+  // Fetch hero slides from DB (admin-managed)
+  useEffect(() => {
+    fetch("/api/hero-slides")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.slides?.length) setSlides(data.slides);
+      })
+      .catch(() => {});
+  }, []);
   const { scrollY } = useScroll();
   const yContent = useTransform(scrollY, [0, 600], [0, 90]);
   const opacityContent = useTransform(scrollY, [0, 480], [1, 0]);
   const yBg = useTransform(scrollY, [0, 600], [0, 120]);
 
   useEffect(() => {
-    const t = setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), 6000);
+    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 6000);
     return () => clearInterval(t);
   }, []);
 
-  const slide = SLIDES[index];
+  const slide = slides[index];
   const waHref = whatsappLink(
     BRAND.whatsapp,
     "Namaste ZARIYA! I'd like to explore your handcrafted collection and place an order. Could you please guide me?"
@@ -102,6 +122,14 @@ export default function Hero() {
               className="h-full w-full object-cover animate-ken-burns"
               fetchPriority="high"
             />
+            {/* Badge — New Arrival / Coming Soon etc */}
+            {slide.badge && (
+              <div className="absolute right-6 top-24 z-20 hidden md:block">
+                <span className="rounded-full bg-gold px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-primary shadow-lg">
+                  {slide.badge}
+                </span>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
         {/* Overlay gradients — enhanced for text readability */}
@@ -276,7 +304,7 @@ export default function Hero() {
 
       {/* Slide indicators */}
       <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5">
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}

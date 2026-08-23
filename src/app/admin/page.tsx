@@ -45,6 +45,7 @@ import {
   UserCheck,
   Crown,
   Instagram,
+  Image,
 } from "lucide-react";
 import Link from "next/link";
 import { PRODUCTS, CATEGORIES, COUPONS, BRAND } from "@/data/catalog";
@@ -65,6 +66,7 @@ type TabId =
   | "reviews"
   | "reports"
   | "cms"
+  | "hero-slides"
   | "subscribers"
   | "settings";
 
@@ -235,6 +237,7 @@ export default function AdminPage() {
     { id: "reviews", label: "Reviews", icon: Star },
     { id: "reports", label: "Reports", icon: BarChart3 },
     { id: "cms", label: "CMS", icon: FileText },
+    { id: "hero-slides", label: "Hero Banners", icon: Image },
     { id: "subscribers", label: "Subscribers", icon: Mail, count: subscribers.length },
     { id: "settings", label: "Settings", icon: Settings },
   ];
@@ -395,6 +398,8 @@ export default function AdminPage() {
           {tab === "reports" && <ReportsTab orders={orders} products={dbProducts} />}
 
           {tab === "cms" && <CMSTab />}
+
+          {tab === "hero-slides" && <HeroSlidesTab />}
 
           {tab === "settings" && <SettingsTab />}
 
@@ -2530,6 +2535,206 @@ function ImageUploader({ images, onChange }: { images: string; onChange: (val: s
           {imageList.length} photo{imageList.length !== 1 ? "s" : ""} · first photo will be used as main image
         </p>
       )}
+    </div>
+  );
+}
+
+/* ---------------- Hero Slides (Banner Management) ---------------- */
+function HeroSlidesTab() {
+  const [slides, setSlides] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const r = await fetch("/api/admin/hero-slides", { credentials: "include" });
+      if (r.ok) {
+        const d = await r.json();
+        setSlides(d.slides);
+      }
+    } catch {}
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => { await load(); if (cancelled) return; })();
+    return () => { cancelled = true; };
+  }, [load]);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this hero slide?")) return;
+    try {
+      await fetch(`/api/admin/hero-slides?id=${id}`, { method: "DELETE", credentials: "include" });
+      toast.success("Slide deleted");
+      load();
+    } catch { toast.error("Failed"); }
+  };
+
+  const toggleActive = async (id: string, active: boolean) => {
+    try {
+      await fetch("/api/admin/hero-slides", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, active: !active }), credentials: "include",
+      });
+      toast.success(active ? "Slide hidden" : "Slide visible");
+      load();
+    } catch {}
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-serif text-3xl font-bold">Hero Banners</h1>
+          <p className="mt-1 text-sm text-slate-400">Manage homepage hero slides · images, titles, badges</p>
+        </div>
+        <button onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold to-champagne px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary">
+          <Plus className="h-4 w-4" /> Add Slide
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="grid place-items-center py-12"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>
+      ) : slides.length === 0 ? (
+        <EmptyState icon={Image} title="No hero slides" subtitle="Add slides to show on the homepage hero section." />
+      ) : (
+        <div className="space-y-3">
+          {slides.map((s, i) => (
+            <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.05, ease: EASE }} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+              <div className="flex gap-4 p-4">
+                {/* Image */}
+                <div className="relative h-24 w-32 flex-none overflow-hidden rounded-lg">
+                  <img src={s.image} alt={s.title || "hero"} className="h-full w-full object-cover" />
+                  {s.badge && <span className="absolute left-1 top-1 rounded bg-gold px-1.5 py-0.5 text-[8px] font-bold uppercase text-primary">{s.badge}</span>}
+                </div>
+                {/* Content */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs text-slate-500">#{s.order}</span>
+                    <span className={cn("rounded-full px-2 py-0.5 text-[9px] font-bold uppercase", s.active ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>{s.active ? "Visible" : "Hidden"}</span>
+                  </div>
+                  <h3 className="mt-1 truncate font-serif text-base font-semibold text-slate-100">{s.title}</h3>
+                  <p className="truncate text-xs text-slate-400">{s.subtitle}</p>
+                  <p className="mt-1 text-[10px] text-slate-500">Eyebrow: {s.eyebrow}</p>
+                </div>
+                {/* Actions */}
+                <div className="flex flex-none flex-col gap-1">
+                  <button onClick={() => { setEditing(s); setShowForm(true); }} className="flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-300 hover:bg-gold/20 hover:text-gold">
+                    <Pencil className="h-3 w-3" /> Edit
+                  </button>
+                  <button onClick={() => toggleActive(s.id, s.active)} className="rounded-md bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-300 hover:bg-amber-500/20 hover:text-amber-400">
+                    {s.active ? "Hide" : "Show"}
+                  </button>
+                  <button onClick={() => handleDelete(s.id)} className="flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-300 hover:bg-red-500/20 hover:text-red-400">
+                    <Trash2 className="h-3 w-3" /> Delete
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {showForm && (
+        <HeroSlideFormModal
+          slide={editing}
+          onClose={() => { setShowForm(false); setEditing(null); }}
+          onSaved={() => { setShowForm(false); setEditing(null); load(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function HeroSlideFormModal({ slide, onClose, onSaved }: { slide: any | null; onClose: () => void; onSaved: () => void }) {
+  const isEdit = !!slide;
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    image: slide?.image || "",
+    eyebrow: slide?.eyebrow || "Handcrafted in Kashmir · Estd. 2009",
+    title: slide?.title || "",
+    subtitle: slide?.subtitle || "",
+    buttonText: slide?.buttonText || "Shop Collection",
+    buttonLink: slide?.buttonLink || "/store",
+    badge: slide?.badge || "",
+    order: slide?.order ?? 0,
+    active: slide?.active !== false,
+  });
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+  const inputCls = "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.image || !form.title) { toast.error("Image and title required"); return; }
+    setSaving(true);
+    try {
+      const method = isEdit ? "PATCH" : "POST";
+      const body = isEdit ? { id: slide.id, ...form, badge: form.badge || null } : { ...form, badge: form.badge || null };
+      const r = await fetch("/api/admin/hero-slides", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), credentials: "include" });
+      const data = await r.json();
+      if (!r.ok) { toast.error(data.error || "Failed"); return; }
+      toast.success(isEdit ? "Slide updated" : "Slide created");
+      onSaved();
+    } catch { toast.error("Network error"); }
+    finally { setSaving(false); }
+  };
+
+  const handleImageUpload = (files: FileList | null) => {
+    if (!files || !files[0]) return;
+    const file = files[0];
+    if (!file.type.startsWith("image/")) { toast.error("Not an image"); return; }
+    const reader = new FileReader();
+    reader.onload = () => set("image", reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-h-[90vh] w-full max-w-lg overflow-y-auto scrollbar-lux rounded-3xl border border-white/10 bg-[hsl(352_30%_8%)] p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="font-serif text-xl font-bold">{isEdit ? "Edit Hero Slide" : "Add Hero Slide"}</h2>
+          <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full text-slate-400 hover:bg-white/10"><X className="h-4 w-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Image upload */}
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Banner Image *</label>
+            {form.image ? (
+              <div className="relative mb-2 overflow-hidden rounded-lg">
+                <img src={form.image} alt="Banner preview" className="aspect-[16/9] w-full object-cover" />
+                <button type="button" onClick={() => set("image", "")} className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white hover:bg-red-500"><X className="h-3.5 w-3.5" /></button>
+              </div>
+            ) : (
+              <div onClick={() => document.getElementById("hero-img-upload")?.click()} className="cursor-pointer rounded-lg border-2 border-dashed border-white/15 p-6 text-center hover:border-gold/40">
+                <Image alt="" className="mx-auto h-8 w-8 text-slate-500" />
+                <p className="mt-2 text-xs text-slate-400">Click to upload banner image</p>
+                <input id="hero-img-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e.target.files)} />
+              </div>
+            )}
+            <input value={form.image.startsWith("data:") ? "" : form.image} onChange={(e) => set("image", e.target.value)} placeholder="/images/hero/your-image.png" className={cn(inputCls, "mt-2")} />
+          </div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Title *</label><input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Every Thread, A Story" className={inputCls} /></div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Subtitle</label><textarea value={form.subtitle} onChange={(e) => set("subtitle", e.target.value)} rows={2} className={inputCls} /></div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Eyebrow Label</label><input value={form.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} className={inputCls} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Badge (optional)</label><input value={form.badge} onChange={(e) => set("badge", e.target.value)} placeholder="New Arrival / Coming Soon" className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Order</label><input type="number" value={form.order} onChange={(e) => set("order", Number(e.target.value))} className={inputCls} /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Button Text</label><input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Button Link</label><input value={form.buttonLink} onChange={(e) => set("buttonLink", e.target.value)} className={inputCls} /></div>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-gold" /><span className="text-xs text-slate-300">Visible on homepage</span></label>
+          <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+            <button type="button" onClick={onClose} className="rounded-full border border-white/15 px-5 py-2 text-xs font-semibold text-slate-300">Cancel</button>
+            <button type="submit" disabled={saving} className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2 text-xs font-semibold text-primary disabled:opacity-60">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving ? "Saving…" : isEdit ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   );
 }
