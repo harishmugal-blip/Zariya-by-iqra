@@ -217,6 +217,11 @@ export function ProductCard({ product, index = 0, className }: { product: Produc
         </div>
         <h3 className="font-serif text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
           {product.name}
+          {product.urduName && (
+            <span className="font-kashmiri ml-2 text-sm font-normal text-gold/70">
+              {product.urduName}
+            </span>
+          )}
         </h3>
         <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{product.subtitle}</p>
 

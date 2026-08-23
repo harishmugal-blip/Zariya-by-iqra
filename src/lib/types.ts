@@ -27,6 +27,7 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
+  urduName?: string;
   subtitle: string;
   description: string;
   story: string;
@@ -83,6 +84,7 @@ export interface Collection {
   id: string;
   slug: string;
   name: string;
+  urduName?: string;
   tagline: string;
   description: string;
   image: string;

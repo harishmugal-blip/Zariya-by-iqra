@@ -99,6 +99,36 @@ export const COLLECTIONS: Collection[] = [
       "Charcoal, emerald and midnight-blue pieces with shimmering zari work — designed for celebration evenings.",
     image: "/images/hero/hero-3.png",
   },
+  {
+    id: "col4",
+    slug: "shabnam",
+    name: "Shabnam",
+    urduName: "شبنم",
+    tagline: "Dewdrops of Dawn",
+    description:
+      "Soft pastels — blush, champagne, and cream — for the woman who wears luxury like a whisper. Light fabrics, delicate borders, everyday elegance.",
+    image: "/images/lifestyle/model-2.png",
+  },
+  {
+    id: "col5",
+    slug: "afsaneh",
+    name: "Afsaneh",
+    urduName: "افسانہ",
+    tagline: "Tales Woven in Thread",
+    description:
+      "Each piece in this collection tells a story — motifs inspired by Kashmiri folk poetry, Mughal gardens, and the chinar leaves of autumn.",
+    image: "/images/lifestyle/insta-3.png",
+  },
+  {
+    id: "col6",
+    slug: "shukrana",
+    name: "Shukrana",
+    urduName: "شکرانہ",
+    tagline: "Gratitude in Every Stitch",
+    description:
+      "Our sustainable everyday line — pure cottons and light pashmina blends for daily wear. Comfort meets conscience, priced for the discerning.",
+    image: "/images/lifestyle/artisan.png",
+  },
 ];
 
 export const COLORS = {
@@ -172,6 +202,7 @@ export const PRODUCTS: Product[] = [
     id: "p1",
     slug: "shahzadi-pheran-burgundy",
     name: "Shahzadi Pheran",
+    urduName: "شہزادی پہرن",
     subtitle: "Hand-Embroidered Burgundy Heirloom",
     description:
       "The Shahzadi Pheran is our signature heirloom — a sweeping silhouette in deep burgundy, hand-embroidered with 24-karat gold-toned aari thread in the traditional Khashidar motif. Each piece takes our master artisans over 150 hours to complete.",
@@ -215,6 +246,7 @@ export const PRODUCTS: Product[] = [
     id: "p2",
     slug: "noor-pashmina-shawl-gold",
     name: "Noor Pashmina Shawl",
+    urduName: "نور پشمنہ شال",
     subtitle: "Royal Gold Heritage Shawl",
     description:
       "The Noor is woven from grade-A pashmina and finished with a hand-embroidered gold border. Whisper-light yet impossibly warm — the kind of shawl that becomes a family heirloom.",
@@ -258,6 +290,7 @@ export const PRODUCTS: Product[] = [
     id: "p3",
     slug: "gulbadan-embroidered-suit",
     name: "Gulbadan Suit Set",
+    urduName: "گلبدن سوٹ",
     subtitle: "Sozni Embroidered Three-Piece",
     description:
       "The Gulbadan is a three-piece ensemble — kurta, trousers and dupatta — hand-embroidered in sozni, the densest needlecraft of Kashmir. Charcoal ground, gold blooms.",
@@ -299,6 +332,7 @@ export const PRODUCTS: Product[] = [
     id: "p4",
     slug: "zeba-champagne-kaftan",
     name: "Zeba Kaftan",
+    urduName: "زیبا کافٹان",
     subtitle: "Champagne Gold Flowing Kaftan",
     description:
       "The Zeba is a fluid, floor-length kaftan in champagne gold, traced with delicate zari at the neckline and cuffs. Designed for resort evenings and celebration mornings.",
@@ -339,6 +373,7 @@ export const PRODUCTS: Product[] = [
     id: "p5",
     slug: "dilruba-emerald-pashmina",
     name: "Dilruba Pashmina",
+    urduName: "دلربا پشمنہ",
     subtitle: "Emerald Heritage Shawl",
     description:
       "The Dilruba is an emerald pashmina shawl with a gold paisley border, embroidered in the classic kani tradition. Rich, regal, and impossibly soft.",
@@ -380,6 +415,7 @@ export const PRODUCTS: Product[] = [
     id: "p6",
     slug: "roohani-blue-pheran",
     name: "Roohani Pheran",
+    urduName: "روحانی پہرن",
     subtitle: "Royal Blue Zari Embroidered",
     description:
       "The Roohani is a regal pheran in royal blue, embroidered with silver-gold zari in a flowing Jamawar-inspired pattern. Made for festive evenings.",
@@ -421,6 +457,7 @@ export const PRODUCTS: Product[] = [
     id: "p7",
     slug: "sahiba-ivory-suit",
     name: "Sahiba Suit Set",
+    urduName: "صاحبہ سوٹ",
     subtitle: "Ivory with Burgundy Aari",
     description:
       "The Sahiba is a serene ivory suit set with burgundy and gold aari embroidery along the yoke and sleeves. Understated, timeless, quietly luxurious.",
@@ -462,6 +499,7 @@ export const PRODUCTS: Product[] = [
     id: "p8",
     slug: "mehak-blush-pashmina",
     name: "Mehak Pashmina",
+    urduName: "مہک پشمنہ",
     subtitle: "Blush Pink Soft Pashmina",
     description:
       "The Mehak is a delicate blush-pink pashmina with a fine gold-embroidered border. Romantic, soft, and effortlessly elegant for day or evening.",
@@ -502,6 +540,7 @@ export const PRODUCTS: Product[] = [
     id: "p9",
     slug: "shahnaaz-black-pheran",
     name: "Shahnaaz Pheran",
+    urduName: "شاہناز پہرن",
     subtitle: "Midnight Black with Gold",
     description:
       "The Shahnaaz is a striking midnight-black pheran with elaborate gold thread embroidery. Bold, dramatic, and unapologetically luxurious.",
@@ -543,6 +582,7 @@ export const PRODUCTS: Product[] = [
     id: "p10",
     slug: "zeenat-olive-kaftan",
     name: "Zeenat Kaftan",
+    urduName: "زینت کافٹان",
     subtitle: "Olive Gold Zari Kaftan",
     description:
       "The Zeenat is an olive-green kaftan with gold zari detailing. A sophisticated, earthy alternative for the woman who collects quiet luxuries.",
@@ -584,6 +624,7 @@ export const PRODUCTS: Product[] = [
     id: "p11",
     slug: "aabida-maroon-pashmina",
     name: "Aabida Pashmina",
+    urduName: "عابدہ پشمنہ",
     subtitle: "Maroon Paisley Shawl",
     description:
       "The Aabida is a rich maroon pashmina with an all-over gold paisley motif, embroidered in the classic kani style. Deep, warm, and regal.",
@@ -625,6 +666,7 @@ export const PRODUCTS: Product[] = [
     id: "p12",
     slug: "noorjahan-cream-suit",
     name: "Noorjahan Suit Set",
+    urduName: "نورجہاں سوٹ",
     subtitle: "Cream with Burgundy & Gold",
     description:
       "The Noorjahan is a cream suit set with burgundy and gold hand embroidery — a tribute to the most powerful woman of the Mughal court.",

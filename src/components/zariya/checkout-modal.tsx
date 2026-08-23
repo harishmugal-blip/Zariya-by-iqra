@@ -829,18 +829,18 @@ function StepPayment({
         <PaymentCard
           value="COD"
           selected={form.paymentMethod === "COD"}
-          title="Cash on Delivery"
+          title="Cash on Delivery (COD)"
           subtitle="Pay in cash to our white-glove courier upon receipt."
           badge="Recommended"
-          description="Available across India. Inspected before payment."
+          description="Available across India. Inspect before payment. ₹0 extra charges."
         />
         <PaymentCard
           value="ONLINE"
           selected={form.paymentMethod === "ONLINE"}
           title="Online Payment"
-          subtitle="UPI / Credit Card / Debit Card / Net Banking."
-          badge="Ready soon"
-          description="Secure encrypted gateway. Faster dispatch priority."
+          subtitle="UPI · Credit Card · Debit Card · Net Banking · Wallets"
+          badge="Faster Dispatch"
+          description="Secure 256-bit encrypted gateway (Razorpay). Get 2% extra discount on online payment."
         />
       </RadioGroup>
 
