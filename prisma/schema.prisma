@@ -168,3 +168,25 @@ model HeroSlide {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model AbandonedCart {
+  id          String   @id @default(cuid())
+  customerEmail String?
+  customerPhone String?
+  itemsJson   String
+  total       Int
+  recovered   Boolean  @default(false)
+  reminderSent Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CustomerAccount {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  phone       String?
+  addressesJson String @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

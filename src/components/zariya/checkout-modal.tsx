@@ -322,6 +322,27 @@ export default function CheckoutModal() {
         couponCode,
       });
 
+      // Mark abandoned cart as recovered
+      fetch(`/api/abandoned-cart?email=${encodeURIComponent(payload.email)}&phone=${encodeURIComponent(payload.phone)}`, { method: "DELETE" }).catch(() => {});
+
+      // Create/update customer account
+      fetch("/api/customer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: payload.email, name: payload.customerName, phone: payload.phone }),
+      }).catch(() => {});
+
+      // Send order confirmation email
+      fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: payload.email,
+          template: "order_confirmation",
+          data: { name: payload.customerName, orderNumber: data.order.orderNumber, total, paymentMethod: payload.paymentMethod },
+        }),
+      }).catch(() => {});
+
       clearCart();
       closeCart();
       toast.success("Order placed successfully", {
