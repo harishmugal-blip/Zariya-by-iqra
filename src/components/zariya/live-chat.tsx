@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
-import { cn, whatsappLink } from "@/lib/utils";
+import { cn, whatsappLink, formatPrice } from "@/lib/utils";
 import { BRAND } from "@/data/catalog";
 import { WhatsAppIcon } from "./product-card";
 
@@ -14,22 +14,62 @@ interface Msg {
 }
 
 const QUICK_REPLIES = [
-  "Help me choose a size",
-  "Tell me about pashmina care",
-  "Track my order",
-  "Gift wrapping options",
+  "🛍️ Show me bestsellers",
+  "📏 Size guide",
+  "💰 Pricing & discounts",
+  "🚚 Delivery & shipping",
+  "💳 Payment options",
+  "↩️ Return policy",
 ];
 
 const BOT_REPLIES: Record<string, string> = {
-  "Help me choose a size":
-    "Wonderful! Our pherans are a relaxed fit — for a tailored look, size down. You can also open our Size Guide on any product page, or WhatsApp our concierge for a personal fitting consult. Which piece are you considering?",
-  "Tell me about pashmina care":
-    "Always dry clean your pashmina. Store it folded in the muslin cloth we provide, away from sunlight. With care, your shawl will last for generations. Would you like a care guide sent to your email?",
-  "Track my order":
-    "I'd be happy to help! Please share your order number (it begins with ZRY-) and I'll fetch the status. For real-time updates, our concierge can also reach you on WhatsApp.",
-  "Gift wrapping options":
-    "Every ZARIYA order arrives in our heirloom ivory box, hand-sealed in gold, with a wax-sealed note from the artisan. For gifts, we add a handwritten card at no charge. Would you like to add a personal message?",
+  "🛍️ Show me bestsellers":
+    "Our top bestsellers:\n\n• Shahzadi Pheran — ₹48,500 (burgundy, gold aari)\n• Noor Pashmina Shawl — ₹32,500 (gold, hand-embroidered)\n• Gulbadan Suit Set — ₹28,900 (charcoal, sozni)\n• Sahiba Suit Set — ₹26,500 (ivory, aari)\n\nVisit our Store page to see all 12 pieces. Which one interests you?",
+  "📏 Size guide":
+    "Sizing guide:\n\n• Pherans: Relaxed fit, size down for tailored look. XS-XXL available.\n• Suits: Kurta measurements, free-size churidar. XS-XXL.\n• Kaftans: One-size-fits-most, adjustable belt.\n• Shawls: One size (100×200cm).\n\nYou can open the full Size Guide on any product page. Still unsure? WhatsApp us for a personal fitting consult!",
+  "💰 Pricing & discounts":
+    "Our pieces range from ₹24,500 to ₹52,000. All prices include GST.\n\nActive coupons:\n• ZARIYA10 — 10% off first order\n• HERITAGE15 — 15% off orders above ₹50,000\n• WELCOME2000 — ₹2,000 off orders above ₹25,000\n\nUse code at checkout. Complimentary white-glove delivery included with every order!",
+  "🚚 Delivery & shipping":
+    "Delivery details:\n\n• India: 5-7 business days (complimentary)\n• International: 7-14 business days (complimentary, worldwide)\n• Each piece is hand-checked and beautifully packaged before dispatch\n• Tracking number sent via email & WhatsApp\n\nEvery order arrives in our heirloom ivory box, hand-sealed in gold.",
+  "💳 Payment options":
+    "Payment methods:\n\n• Cash on Delivery (COD) ✅ — Pay when you receive\n• UPI / Razorpay — Coming soon\n• Credit / Debit Card — Coming soon\n• Google Pay — Coming soon\n\nYou can also order directly via WhatsApp — our concierge will confirm details and dispatch personally.",
+  "↩️ Return policy":
+    "Returns & exchanges:\n\n• 7-day easy returns on unworn pieces with original packaging\n• Complimentary size exchange within 7 days (subject to stock)\n• Limited-edition & made-to-measure pieces are non-returnable\n• Refunds processed within 5-7 business days\n\nContact our concierge via WhatsApp for any return assistance.",
 };
+
+// Keyword-based smart replies for free-text messages
+function getSmartReply(text: string): string {
+  const t = text.toLowerCase();
+  if (t.includes("price") || t.includes("cost") || t.includes("kitna") || t.includes("rate"))
+    return "Our pieces range from ₹24,500 to ₹52,000 (GST included). Use code ZARIYA10 for 10% off your first order! Visit our Store page for full pricing.";
+  if (t.includes("size") || t.includes("fit"))
+    return "Pherans are relaxed fit (size down for tailored), suits XS-XXL, kaftans one-size, shawls one size. Open the Size Guide on any product page for detailed measurements.";
+  if (t.includes("deliver") || t.includes("shipping") || t.includes("kab"))
+    return "India: 5-7 days, International: 7-14 days — both complimentary! Every order ships in our heirloom ivory box with gold seal.";
+  if (t.includes("cod") || t.includes("cash") || t.includes("payment") || t.includes("pay"))
+    return "We accept Cash on Delivery (COD) ✅. Online payments (UPI, Card) coming soon. You can also order directly via WhatsApp!";
+  if (t.includes("return") || t.includes("exchange") || t.includes("refund"))
+    return "7-day easy returns on unworn pieces. Free size exchange within 7 days. Refunds in 5-7 business days. Limited-edition pieces are non-returnable.";
+  if (t.includes("pashmina") || t.includes("shawl"))
+    return "Our pashmina shawls are 100% Grade-A Kashmiri pashmina, hand-embroidered. Prices: ₹24,500-₹41,000. Each comes with a certificate of authenticity. Would you like to see our collection?";
+  if (t.includes("pheran"))
+    return "Our pherans are hand-embroidered in deep burgundy, black, and royal blue — with gold aari & zari work. Prices: ₹48,500-₹52,000. Each takes 150+ hours of artisan needlework!";
+  if (t.includes("suit"))
+    return "Our embroidered suits feature sozni & aari handwork. Charcoal, ivory, cream variants. Prices: ₹26,500-₹29,800. Three-piece sets (kurta, pant, dupatta).";
+  if (t.includes("kaftan"))
+    return "Our kaftans are flowing silk chiffon with gold zari — champagne & olive variants. Price: ₹33,800-₹36,500. Perfect for resort evenings!";
+  if (t.includes("whatsapp") || t.includes("order"))
+    return "You can order directly via WhatsApp! Click the green WhatsApp button on any product, or the 'Escalate to WhatsApp' button below. Our concierge will confirm details and dispatch personally.";
+  if (t.includes("coupon") || t.includes("discount") || t.includes("offer"))
+    return "Active coupons:\n• ZARIYA10 — 10% off first order\n• HERITAGE15 — 15% off above ₹50,000\n• WELCOME2000 — ₹2,000 off above ₹25,000";
+  if (t.includes("gift"))
+    return "Every ZARIYA order arrives in our heirloom ivory box, hand-sealed in gold, with a handwritten note. We also offer gift cards from ₹10,000 — perfect for gifting a loved one!";
+  if (t.includes("hi") || t.includes("hello") || t.includes("namaste") || t.includes("hey"))
+    return "Namaste! 🙏 Welcome to ZARIYA by IQRA. I'm your personal concierge. How can I help you find your perfect Kashmiri heirloom today?";
+  if (t.includes("thank"))
+    return "You're most welcome! It's our pleasure. If you have any more questions, I'm right here. Or WhatsApp our concierge for personal assistance. 🌸";
+  return "Thank you for your message! For specific queries, try the quick questions above, or tap 'Escalate to WhatsApp' below — our concierge will respond personally within minutes. 🌸";
+}
 
 export function LiveChat() {
   const [open, setOpen] = useState(false);
@@ -39,7 +79,7 @@ export function LiveChat() {
     {
       id: 1,
       from: "bot",
-      text: "Namaste, and welcome to ZARIYA. I'm your personal concierge. How may I help you find your heirloom today?",
+      text: "Namaste 🙏 Welcome to ZARIYA by IQRA! I'm your personal concierge. Ask me about our Kashmiri pherans, pashmina shawls, suits, kaftans — pricing, sizing, delivery, or anything else!",
     },
   ]);
   const endRef = useRef<HTMLDivElement>(null);
@@ -57,7 +97,7 @@ export function LiveChat() {
     const userMsg: Msg = { id: Date.now(), from: "user", text: text.trim() };
     setMessages((m) => [...m, userMsg]);
     setInput("");
-    const reply = BOT_REPLIES[text] || "Thank you for your message. For a personal response, our concierge is one tap away on WhatsApp — or share your email and we'll write back within the hour.";
+    const reply = BOT_REPLIES[text] || getSmartReply(text);
     setTimeout(() => {
       setMessages((m) => [...m, { id: Date.now() + 1, from: "bot", text: reply }]);
     }, 700);
@@ -106,7 +146,7 @@ export function LiveChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-36 left-4 z-40 flex h-[480px] w-[calc(100vw-2rem)] max-w-[360px] flex-col overflow-hidden rounded-3xl border border-border bg-card luxury-shadow-lg lg:bottom-24 lg:left-6"
+            className="fixed bottom-36 left-4 z-40 flex h-[500px] w-[calc(100vw-2rem)] max-w-[370px] flex-col overflow-hidden rounded-3xl border border-border bg-card luxury-shadow-lg lg:bottom-24 lg:left-6"
           >
             {/* Header */}
             <div className="relative overflow-hidden bg-primary px-4 py-4 text-primary-foreground">
@@ -136,7 +176,7 @@ export function LiveChat() {
                 >
                   <div
                     className={cn(
-                      "max-w-[78%] rounded-2xl px-3.5 py-2 text-xs leading-relaxed",
+                      "max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2 text-xs leading-relaxed",
                       m.from === "user"
                         ? "rounded-br-sm bg-primary text-primary-foreground"
                         : "rounded-bl-sm bg-card border border-border text-foreground"
@@ -157,7 +197,7 @@ export function LiveChat() {
                     <button
                       key={q}
                       onClick={() => send(q)}
-                      className="block w-full rounded-xl border border-gold/30 bg-gold/5 px-3 py-1.5 text-left text-xs text-foreground transition-all hover:bg-gold/10"
+                      className="block w-full rounded-xl border border-gold/30 bg-gold/5 px-3 py-2 text-left text-xs text-foreground transition-all hover:bg-gold/10"
                     >
                       {q}
                     </button>
@@ -174,7 +214,7 @@ export function LiveChat() {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-1.5 border-t border-border bg-emerald/5 px-4 py-2 text-xs font-semibold text-emerald transition-colors hover:bg-emerald/10"
             >
-              <WhatsAppIcon className="h-3.5 w-3.5" /> Escalate to WhatsApp Concierge
+              <WhatsAppIcon className="h-3.5 w-3.5" /> Order on WhatsApp
             </a>
 
             {/* Input */}
