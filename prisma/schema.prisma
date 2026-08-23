@@ -137,3 +137,19 @@ model ProductEnquiry {
   message   String
   createdAt DateTime @default(now())
 }
+
+model StoreSettings {
+  id            String   @id @default("singleton")
+  storeName     String   @default("ZARIYA by IQRA")
+  email         String   @default("concierge@zariya.com")
+  phone         String   @default("+919876543210")
+  whatsapp      String   @default("919876543210")
+  address       String   @default("Lal Chowk, Srinagar, Kashmir, India 190001")
+  currency      String   @default("INR")
+  gstRate       String   @default("5%")
+  codEnabled    Boolean  @default(true)
+  upiEnabled    Boolean  @default(false)
+  cardEnabled   Boolean  @default(false)
+  freeShipping  Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+}

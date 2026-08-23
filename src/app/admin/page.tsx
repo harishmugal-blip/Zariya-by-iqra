@@ -50,6 +50,7 @@ import { PRODUCTS, CATEGORIES, COUPONS, BRAND } from "@/data/catalog";
 import { cn, formatPrice, formatNumber } from "@/lib/utils";
 import { Stars } from "@/components/zariya/stars";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
 
 type TabId =
   | "overview"
@@ -2129,17 +2130,75 @@ function CMSTab() {
 
 /* ---------------- Settings ---------------- */
 function SettingsTab() {
-  const [storeName, setStoreName] = useState(BRAND.fullName);
-  const [email, setEmail] = useState(BRAND.email);
-  const [phone, setPhone] = useState(BRAND.phone);
-  const [currency, setCurrency] = useState("INR (₹)");
-  const [gst, setGst] = useState("5%");
+  const [form, setForm] = useState({
+    storeName: BRAND.fullName,
+    email: BRAND.email,
+    phone: BRAND.phone,
+    whatsapp: BRAND.whatsapp,
+    address: BRAND.address,
+    currency: "INR",
+    gstRate: "5%",
+    codEnabled: true,
+    upiEnabled: false,
+    cardEnabled: false,
+    freeShipping: true,
+  });
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [adminUsers, setAdminUsers] = useState<any[]>([]);
+  const [showAddAdmin, setShowAddAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/settings", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.settings) {
+          setForm((f) => ({ ...f, ...data.settings }));
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+    fetch("/api/admin/admin-users", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data?.users) setAdminUsers(data.users); })
+      .catch(() => {});
+  }, []);
+
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const r = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+        credentials: "include",
+      });
+      if (r.ok) toast.success("Settings saved to database");
+      else toast.error("Failed to save");
+    } catch { toast.error("Network error"); }
+    finally { setSaving(false); }
+  };
+
+  const handleDeleteAdmin = async (id: string) => {
+    if (!confirm("Delete this admin user?")) return;
+    try {
+      await fetch(`/api/admin/admin-users?id=${id}`, { method: "DELETE", credentials: "include" });
+      toast.success("Admin user deleted");
+      setAdminUsers((prev) => prev.filter((u) => u.id !== id));
+    } catch { toast.error("Failed"); }
+  };
+
+  const inputCls = "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50";
+
+  if (loading) return <div className="grid place-items-center py-20"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>;
 
   return (
     <div className="space-y-5">
       <div>
         <h1 className="font-serif text-3xl font-bold">Settings</h1>
-        <p className="mt-1 text-sm text-slate-400">Store · payment · shipping · security</p>
+        <p className="mt-1 text-sm text-slate-400">Store · payment · shipping · security · admin users</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -2147,18 +2206,11 @@ function SettingsTab() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="mb-4 font-serif text-lg font-semibold">Store Information</h2>
           <div className="space-y-3">
-            <div>
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Store Name</label>
-              <input value={storeName} onChange={(e) => setStoreName(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
-            </div>
-            <div>
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Email</label>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
-            </div>
-            <div>
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Phone / WhatsApp</label>
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
-            </div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Store Name</label><input value={form.storeName} onChange={(e) => set("storeName", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Email</label><input value={form.email} onChange={(e) => set("email", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Phone</label><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">WhatsApp</label><input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Address</label><textarea value={form.address} onChange={(e) => set("address", e.target.value)} rows={2} className={inputCls} /></div>
           </div>
         </div>
 
@@ -2166,17 +2218,11 @@ function SettingsTab() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="mb-4 font-serif text-lg font-semibold">Tax & Currency</h2>
           <div className="space-y-3">
-            <div>
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Currency</label>
-              <input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
-            </div>
-            <div>
-              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">GST Rate</label>
-              <input value={gst} onChange={(e) => setGst(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
-            </div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Currency</label><input value={form.currency} onChange={(e) => set("currency", e.target.value)} className={inputCls} /></div>
+            <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">GST Rate</label><input value={form.gstRate} onChange={(e) => set("gstRate", e.target.value)} className={inputCls} /></div>
             <div className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
-              <span className="text-sm text-slate-300">GST included in prices</span>
-              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-400">YES</span>
+              <span className="text-sm text-slate-300">Free Shipping (worldwide)</span>
+              <Switch checked={form.freeShipping} onCheckedChange={(v) => set("freeShipping", v)} />
             </div>
           </div>
         </div>
@@ -2185,45 +2231,117 @@ function SettingsTab() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="mb-4 font-serif text-lg font-semibold">Payment Gateways</h2>
           <div className="space-y-2">
-            {[
-              { name: "Cash on Delivery (COD)", active: true },
-              { name: "UPI / Razorpay", active: false },
-              { name: "Credit / Debit Card", active: false },
-              { name: "Google Pay", active: false },
-            ].map((pg) => (
-              <div key={pg.name} className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
-                <span className="text-sm text-slate-300">{pg.name}</span>
-                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", pg.active ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>
-                  {pg.active ? "Active" : "Coming Soon"}
-                </span>
-              </div>
-            ))}
+            <div className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+              <span className="text-sm text-slate-300">Cash on Delivery (COD)</span>
+              <Switch checked={form.codEnabled} onCheckedChange={(v) => set("codEnabled", v)} />
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+              <span className="text-sm text-slate-300">UPI / Razorpay</span>
+              <Switch checked={form.upiEnabled} onCheckedChange={(v) => set("upiEnabled", v)} />
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+              <span className="text-sm text-slate-300">Credit / Debit Card</span>
+              <Switch checked={form.cardEnabled} onCheckedChange={(v) => set("cardEnabled", v)} />
+            </div>
           </div>
         </div>
 
-        {/* Admin users */}
+        {/* Admin users & roles */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="mb-4 font-serif text-lg font-semibold">Admin Users & Roles</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-serif text-lg font-semibold">Admin Users & Roles</h2>
+            <button onClick={() => setShowAddAdmin(true)} className="flex items-center gap-1 rounded-full bg-gold/20 px-3 py-1 text-[10px] font-semibold text-gold hover:bg-gold/30">
+              <Plus className="h-3 w-3" /> Add
+            </button>
+          </div>
           <div className="space-y-2">
-            <div className="flex items-center gap-2 rounded-lg bg-white/[0.02] px-3 py-2">
-              <Crown className="h-4 w-4 text-gold" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-100">ZARIYA Admin</p>
-                <p className="text-xs text-slate-400">admin@zariya.com</p>
+            {adminUsers.map((u) => (
+              <div key={u.id} className="flex items-center gap-2 rounded-lg bg-white/[0.02] px-3 py-2">
+                {u.role === "SUPER_ADMIN" ? <Crown className="h-4 w-4 text-gold" /> : <Shield className="h-4 w-4 text-slate-400" />}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-100">{u.name}</p>
+                  <p className="truncate text-xs text-slate-400">{u.email}</p>
+                </div>
+                <span className={cn("rounded-full px-2 py-0.5 text-[9px] font-bold uppercase", u.role === "SUPER_ADMIN" ? "bg-gold/20 text-gold" : "bg-slate-500/15 text-slate-400")}>{u.role === "SUPER_ADMIN" ? "Super Admin" : "Admin"}</span>
+                {u.role !== "SUPER_ADMIN" && (
+                  <button onClick={() => handleDeleteAdmin(u.id)} className="text-slate-500 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+                )}
               </div>
-              <span className="rounded-full bg-gold/20 px-2 py-0.5 text-[10px] font-bold uppercase text-gold">Super Admin</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Save button */}
       <button
-        onClick={() => toast.success("Settings saved")}
-        className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2.5 text-xs font-semibold uppercase tracking-wide text-primary"
+        onClick={handleSave}
+        disabled={saving}
+        className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2.5 text-xs font-semibold uppercase tracking-wide text-primary disabled:opacity-60"
       >
-        <Save className="h-4 w-4" /> Save Settings
+        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        {saving ? "Saving…" : "Save Settings"}
       </button>
+
+      {/* Add Admin User Modal */}
+      {showAddAdmin && (
+        <AddAdminModal onClose={() => setShowAddAdmin(false)} onSaved={() => { setShowAddAdmin(false); fetch("/api/admin/admin-users", { credentials: "include" }).then((r) => r.json()).then((d) => d.users && setAdminUsers(d.users)); }} />
+      )}
+    </div>
+  );
+}
+
+function AddAdminModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("ADMIN");
+  const [saving, setSaving] = useState(false);
+  const inputCls = "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !password) { toast.error("All fields required"); return; }
+    setSaving(true);
+    try {
+      const r = await fetch("/api/admin/admin-users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+        credentials: "include",
+      });
+      const data = await r.json();
+      if (!r.ok) { toast.error(data.error || "Failed"); return; }
+      toast.success("Admin user created");
+      onSaved();
+    } catch { toast.error("Network error"); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md rounded-3xl border border-white/10 bg-[hsl(352_30%_8%)] p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="font-serif text-xl font-bold">Add Admin User</h2>
+          <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full text-slate-400 hover:bg-white/10"><X className="h-4 w-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Name *</label><input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} /></div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Email *</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} /></div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Password *</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputCls} /></div>
+          <div><label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Role</label>
+            <select value={role} onChange={(e) => setRole(e.target.value)} className={inputCls}>
+              <option value="ADMIN">Admin</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+            <button type="button" onClick={onClose} className="rounded-full border border-white/15 px-5 py-2 text-xs font-semibold text-slate-300">Cancel</button>
+            <button type="submit" disabled={saving} className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2 text-xs font-semibold text-primary disabled:opacity-60">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving ? "Creating…" : "Create"}
+            </button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   );
 }
