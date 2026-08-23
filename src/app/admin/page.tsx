@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -609,8 +609,11 @@ function ProductFormModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Image URLs (one per line)</label>
-            <textarea value={form.images} onChange={(e) => set("images", e.target.value)} rows={3} placeholder="/images/products/p1.png" className={inputCls} />
+            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Product Photos</label>
+            <ImageUploader
+              images={form.images}
+              onChange={(val) => set("images", val)}
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -2342,6 +2345,184 @@ function AddAdminModal({ onClose, onSaved }: { onClose: () => void; onSaved: () 
           </div>
         </form>
       </motion.div>
+    </div>
+  );
+}
+
+/* ---------------- Image Uploader ---------------- */
+function ImageUploader({ images, onChange }: { images: string; onChange: (val: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // images is a newline-separated string of URLs
+  const imageList = images.split("\n").map((s) => s.trim()).filter(Boolean);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+
+    const newUrls: string[] = [];
+    for (const file of Array.from(files)) {
+      // Validate image type
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} is not an image`);
+        continue;
+      }
+      // Validate size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} is too large (max 5MB)`);
+        continue;
+      }
+
+      // Convert to base64 data URL (for demo — in production, upload to S3/Cloudinary)
+      const dataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      newUrls.push(dataUrl);
+    }
+
+    if (newUrls.length > 0) {
+      const updated = [...imageList, ...newUrls].join("\n");
+      onChange(updated);
+      toast.success(`${newUrls.length} photo${newUrls.length !== 1 ? "s" : ""} uploaded`);
+    }
+    setUploading(false);
+  };
+
+  const removeImage = (idx: number) => {
+    const updated = imageList.filter((_, i) => i !== idx).join("\n");
+    onChange(updated);
+    toast("Photo removed");
+  };
+
+  const moveImage = (idx: number, dir: "up" | "down") => {
+    const newList = [...imageList];
+    const target = dir === "up" ? idx - 1 : idx + 1;
+    if (target < 0 || target >= newList.length) return;
+    [newList[idx], newList[target]] = [newList[target], newList[idx]];
+    onChange(newList.join("\n"));
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Upload zone */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          handleFiles(e.dataTransfer.files);
+        }}
+        onClick={() => fileRef.current?.click()}
+        className={cn(
+          "cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-all",
+          dragOver ? "border-gold bg-gold/10" : "border-white/15 hover:border-gold/40 hover:bg-white/[0.02]"
+        )}
+      >
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFiles(e.target.files)}
+        />
+        {uploading ? (
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin text-gold" />
+            <p className="text-xs text-slate-400">Uploading…</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-gold/10">
+              <Plus className="h-5 w-5 text-gold" />
+            </div>
+            <p className="text-sm font-medium text-slate-200">Click to upload or drag & drop</p>
+            <p className="text-[11px] text-slate-500">PNG, JPG, WebP · max 5MB each · multiple files allowed</p>
+          </div>
+        )}
+      </div>
+
+      {/* URL paste fallback */}
+      <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+          Or paste image URL manually
+        </summary>
+        <input
+          type="text"
+          placeholder="/images/products/new-product.png"
+          className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 outline-none focus:border-gold/50"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              const val = (e.target as HTMLInputElement).value.trim();
+              if (val) {
+                onChange([...imageList, val].join("\n"));
+                (e.target as HTMLInputElement).value = "";
+                toast.success("Image URL added");
+              }
+            }
+          }}
+        />
+      </details>
+
+      {/* Preview grid */}
+      {imageList.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {imageList.map((src, i) => (
+            <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-white/10 bg-white/5">
+              <img src={src} alt={`Product photo ${i + 1}`} className="h-full w-full object-cover" />
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                  {/* Move buttons */}
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); moveImage(i, "up"); }}
+                      disabled={i === 0}
+                      className="grid h-6 w-6 place-items-center rounded bg-white/20 text-white disabled:opacity-30 hover:bg-white/30"
+                    >
+                      <ArrowLeft className="h-3 w-3 rotate-[-90deg]" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); moveImage(i, "down"); }}
+                      disabled={i === imageList.length - 1}
+                      className="grid h-6 w-6 place-items-center rounded bg-white/20 text-white disabled:opacity-30 hover:bg-white/30"
+                    >
+                      <ArrowLeft className="h-3 w-3 rotate-90" />
+                    </button>
+                  </div>
+                  {/* Delete */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); removeImage(i); }}
+                    className="grid h-6 w-6 place-items-center rounded bg-red-500/80 text-white hover:bg-red-500"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+              {/* Order badge */}
+              <span className="absolute left-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-gold text-[9px] font-bold text-primary">
+                {i + 1}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Image count */}
+      {imageList.length > 0 && (
+        <p className="text-[11px] text-slate-500">
+          {imageList.length} photo{imageList.length !== 1 ? "s" : ""} · first photo will be used as main image
+        </p>
+      )}
     </div>
   );
 }
