@@ -1105,47 +1105,100 @@ function ProductsTab({
 /* ---------------- Reviews ---------------- */
 function ReviewsTab() {
   const allReviews = PRODUCTS.flatMap((p) =>
-    p.reviews.map((r) => ({ ...r, productName: p.name, productSlug: p.slug }))
+    p.reviews.map((r) => ({ ...r, productName: p.name, productSlug: p.slug, status: "approved" }))
   );
+  const [reviews, setReviews] = useState(allReviews);
+  const [search, setSearch] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("all");
+
+  const filtered = reviews.filter((r) => {
+    const matchSearch = !search || r.author.toLowerCase().includes(search.toLowerCase()) || r.title.toLowerCase().includes(search.toLowerCase()) || r.productName.toLowerCase().includes(search.toLowerCase());
+    const matchRating = ratingFilter === "all" || r.rating === Number(ratingFilter);
+    return matchSearch && matchRating;
+  });
+
+  const handleApprove = async (id: string) => {
+    toast.success("Review approved");
+    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, status: "approved" } : r));
+  };
+  const handleReject = async (id: string) => {
+    toast.success("Review rejected");
+    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, status: "rejected" } : r));
+  };
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this review?")) return;
+    toast.success("Review deleted");
+    setReviews((prev) => prev.filter((r) => r.id !== id));
+  };
+
   return (
     <div className="space-y-5">
       <div>
         <h1 className="font-serif text-3xl font-bold">Reviews</h1>
-        <p className="mt-1 text-sm text-slate-400">{allReviews.length} customer reviews across the catalog</p>
+        <p className="mt-1 text-sm text-slate-400">{filtered.length} customer reviews · moderate & manage</p>
       </div>
+
+      {/* Search + filter */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search reviews…" className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm outline-none focus:border-gold/50" />
+        </div>
+        <div className="flex gap-1.5">
+          {["all", "5", "4", "3"].map((f) => (
+            <button key={f} onClick={() => setRatingFilter(f)} className={cn("rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide", ratingFilter === f ? "bg-gold text-primary" : "border border-white/10 text-slate-400")}>
+              {f === "all" ? "All" : `${f}★`}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-3">
-        {allReviews.slice(0, 30).map((r, i) => (
-          <motion.div
-            key={r.id}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: i * 0.02, ease: EASE }}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <Stars rating={r.rating} size={13} />
-                  <span className="text-xs text-slate-400">{r.author}</span>
-                  {r.verified && (
-                    <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400">
-                      VERIFIED
+        {filtered.length === 0 ? (
+          <EmptyState icon={Star} title="No reviews found" subtitle="Try adjusting your search or filters." />
+        ) : (
+          filtered.slice(0, 30).map((r, i) => (
+            <motion.div
+              key={r.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.02, ease: EASE }}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Stars rating={r.rating} size={13} />
+                    <span className="text-xs text-slate-400">{r.author}</span>
+                    {r.verified && (
+                      <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400">VERIFIED</span>
+                    )}
+                    <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase", r.status === "approved" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400")}>
+                      {r.status}
                     </span>
-                  )}
+                  </div>
+                  <h3 className="mt-1 font-serif text-sm font-semibold text-slate-100">{r.title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-400">{r.body}</p>
+                  <p className="mt-1.5 text-[10px] text-slate-500">
+                    on <span className="text-gold">{r.productName}</span>
+                    {r.location ? ` · ${r.location}` : ""}
+                  </p>
                 </div>
-                <h3 className="mt-1 font-serif text-sm font-semibold text-slate-100">{r.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400">{r.body}</p>
-                <p className="mt-1.5 text-[10px] text-slate-500">
-                  on <span className="text-gold">{r.productName}</span>
-                  {r.location ? ` · ${r.location}` : ""}
-                </p>
+                <div className="flex flex-none flex-col gap-1">
+                  <button onClick={() => handleApprove(r.id)} className="rounded-lg border border-emerald-500/30 px-2.5 py-1 text-[10px] font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/10">
+                    <CheckCircle2 className="mr-1 inline h-3 w-3" />Approve
+                  </button>
+                  <button onClick={() => handleReject(r.id)} className="rounded-lg border border-amber-500/30 px-2.5 py-1 text-[10px] font-semibold text-amber-400 transition-colors hover:bg-amber-500/10">
+                    Reject
+                  </button>
+                  <button onClick={() => handleDelete(r.id)} className="rounded-lg border border-red-500/30 px-2.5 py-1 text-[10px] font-semibold text-red-400 transition-colors hover:bg-red-500/10">
+                    <Trash2 className="mr-1 inline h-3 w-3" />Delete
+                  </button>
+                </div>
               </div>
-              <button className="flex-none rounded-lg border border-emerald-500/30 px-2.5 py-1 text-[10px] font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/10">
-                APPROVE
-              </button>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -1191,23 +1244,86 @@ function SubscribersTab({ subscribers }: { subscribers: any[] }) {
 
 /* ---------------- Coupons ---------------- */
 function CouponsTab() {
+  const [coupons, setCoupons] = useState<any[]>(COUPONS);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
+
+  const loadCoupons = useCallback(async () => {
+    try {
+      const r = await fetch("/api/admin/coupons", { credentials: "include" });
+      if (r.ok) {
+        const d = await r.json();
+        if (d.coupons?.length) setCoupons(d.coupons);
+      }
+    } catch {}
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await loadCoupons();
+      if (cancelled) return;
+    })();
+    return () => { cancelled = true; };
+  }, [loadCoupons]);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this coupon?")) return;
+    try {
+      await fetch(`/api/admin/coupons?id=${id}`, { method: "DELETE", credentials: "include" });
+      toast.success("Coupon deleted");
+      loadCoupons();
+    } catch { toast.error("Failed to delete"); }
+  };
+
+  const toggleActive = async (id: string, active: boolean) => {
+    try {
+      await fetch("/api/admin/coupons", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, active: !active }),
+        credentials: "include",
+      });
+      toast.success(active ? "Coupon deactivated" : "Coupon activated");
+      loadCoupons();
+    } catch {}
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="font-serif text-3xl font-bold">Coupons</h1>
-        <p className="mt-1 text-sm text-slate-400">{COUPONS.length} active discount codes</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-serif text-3xl font-bold">Coupons</h1>
+          <p className="mt-1 text-sm text-slate-400">{coupons.length} discount codes</p>
+        </div>
+        <button
+          onClick={() => { setEditing(null); setShowForm(true); }}
+          className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold to-champagne px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary"
+        >
+          <Plus className="h-4 w-4" /> Add Coupon
+        </button>
       </div>
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {COUPONS.map((c, i) => (
+        {coupons.map((c, i) => (
           <motion.div
-            key={c.code}
+            key={c.id || c.code}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: i * 0.05, ease: EASE }}
             className="relative overflow-hidden rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/10 to-transparent p-5"
           >
             <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-gold/10 blur-2xl" />
-            <p className="font-mono text-lg font-bold text-gold">{c.code}</p>
+            <div className="flex items-start justify-between">
+              <p className="font-mono text-lg font-bold text-gold">{c.code}</p>
+              {c.id && (
+                <span className={cn("rounded-full px-2 py-0.5 text-[9px] font-bold uppercase", c.active !== false ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>
+                  {c.active !== false ? "Active" : "Inactive"}
+                </span>
+              )}
+            </div>
             <p className="mt-2 font-serif text-3xl font-bold">
               {c.type === "percent" ? `${c.value}%` : formatPrice(c.value)}
               <span className="text-sm font-normal text-slate-400"> off</span>
@@ -1216,9 +1332,123 @@ function CouponsTab() {
             <p className="mt-3 text-[10px] uppercase tracking-wide text-slate-500">
               Min order: {formatPrice(c.minOrder)}
             </p>
+            {c.id && (
+              <div className="mt-3 flex gap-2 border-t border-white/5 pt-3">
+                <button
+                  onClick={() => { setEditing(c); setShowForm(true); }}
+                  className="flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] text-slate-300 hover:bg-gold/20 hover:text-gold"
+                >
+                  <Pencil className="h-3 w-3" /> Edit
+                </button>
+                <button
+                  onClick={() => toggleActive(c.id, c.active !== false)}
+                  className="flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] text-slate-300 hover:bg-amber-500/20 hover:text-amber-400"
+                >
+                  {c.active !== false ? "Deactivate" : "Activate"}
+                </button>
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  className="flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] text-slate-300 hover:bg-red-500/20 hover:text-red-400"
+                >
+                  <Trash2 className="h-3 w-3" /> Delete
+                </button>
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
+
+      {showForm && (
+        <CouponFormModal
+          coupon={editing}
+          onClose={() => { setShowForm(false); setEditing(null); }}
+          onSaved={() => { setShowForm(false); setEditing(null); loadCoupons(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CouponFormModal({ coupon, onClose, onSaved }: { coupon: any | null; onClose: () => void; onSaved: () => void }) {
+  const isEdit = !!coupon;
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    code: coupon?.code || "",
+    type: coupon?.type || "percent",
+    value: coupon?.value || 10,
+    minOrder: coupon?.minOrder || 0,
+    description: coupon?.description || "",
+    active: coupon?.active !== false,
+  });
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.code || !form.value) { toast.error("Code and value are required"); return; }
+    setSaving(true);
+    try {
+      const method = isEdit ? "PATCH" : "POST";
+      const body = isEdit ? { id: coupon.id, ...form } : form;
+      const r = await fetch("/api/admin/coupons", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      const data = await r.json();
+      if (!r.ok) { toast.error(data.error || "Failed"); return; }
+      toast.success(isEdit ? "Coupon updated" : "Coupon created");
+      onSaved();
+    } catch { toast.error("Network error"); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md rounded-3xl border border-white/10 bg-[hsl(352_30%_8%)] p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="font-serif text-xl font-bold">{isEdit ? "Edit Coupon" : "Add Coupon"}</h2>
+          <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full text-slate-400 hover:bg-white/10"><X className="h-4 w-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Code *</label>
+            <input value={form.code} onChange={(e) => set("code", e.target.value.toUpperCase())} placeholder="ZARIYA10" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-gold/50" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Type</label>
+              <select value={form.type} onChange={(e) => set("type", e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50">
+                <option value="percent">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (₹)</option>
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Value *</label>
+              <input type="number" value={form.value} onChange={(e) => set("value", Number(e.target.value))} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Min Order (₹)</label>
+            <input type="number" value={form.minOrder} onChange={(e) => set("minOrder", Number(e.target.value))} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+          </div>
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-slate-400">Description</label>
+            <input value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="10% off first order" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={form.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-gold" />
+            <span className="text-xs text-slate-300">Active</span>
+          </label>
+          <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+            <button type="button" onClick={onClose} className="rounded-full border border-white/15 px-5 py-2 text-xs font-semibold text-slate-300">Cancel</button>
+            <button type="submit" disabled={saving} className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2 text-xs font-semibold text-primary disabled:opacity-60">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Saving…" : isEdit ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   );
 }
@@ -1560,9 +1790,17 @@ function ReportsTab({ orders, products }: { orders: any[]; products: any[] }) {
           <h1 className="font-serif text-3xl font-bold">Reports & Analytics</h1>
           <p className="mt-1 text-sm text-slate-400">Sales · revenue · product performance</p>
         </div>
-        <button className="flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
-          <Download className="h-3.5 w-3.5" /> Export CSV
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => window.open("/api/admin/export?type=orders", "_blank")} className="flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
+            <Download className="h-3.5 w-3.5" /> Orders CSV
+          </button>
+          <button onClick={() => window.open("/api/admin/export?type=products", "_blank")} className="flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
+            <Download className="h-3.5 w-3.5" /> Products CSV
+          </button>
+          <button onClick={() => window.open("/api/admin/export?type=customers", "_blank")} className="flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
+            <Download className="h-3.5 w-3.5" /> Customers CSV
+          </button>
+        </div>
       </div>
 
       {/* KPIs */}
