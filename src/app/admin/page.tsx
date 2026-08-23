@@ -26,6 +26,24 @@ import {
   X,
   Loader2,
   Save,
+  Warehouse,
+  CreditCard,
+  Truck,
+  BarChart3,
+  FileText,
+  Settings,
+  Shield,
+  Download,
+  AlertTriangle,
+  ArrowUpDown,
+  Eye,
+  Filter,
+  Tag,
+  DollarSign,
+  PackageCheck,
+  RotateCcw,
+  UserCheck,
+  Crown,
 } from "lucide-react";
 import Link from "next/link";
 import { PRODUCTS, CATEGORIES, COUPONS, BRAND } from "@/data/catalog";
@@ -33,7 +51,20 @@ import { cn, formatPrice, formatNumber } from "@/lib/utils";
 import { Stars } from "@/components/zariya/stars";
 import { toast } from "sonner";
 
-type TabId = "overview" | "orders" | "products" | "reviews" | "subscribers" | "coupons";
+type TabId =
+  | "overview"
+  | "orders"
+  | "products"
+  | "inventory"
+  | "customers"
+  | "coupons"
+  | "payments"
+  | "shipping"
+  | "reviews"
+  | "reports"
+  | "cms"
+  | "subscribers"
+  | "settings";
 
 interface Stats {
   counts: { orders: number; subscribers: number; contacts: number; enquiries: number; products: number; categories: number; coupons: number };
@@ -191,12 +222,19 @@ export default function AdminPage() {
   });
 
   const tabs: { id: TabId; label: string; icon: typeof LayoutDashboard; count?: number }[] = [
-    { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     { id: "orders", label: "Orders", icon: ShoppingBag, count: orders.length },
     { id: "products", label: "Products", icon: Package, count: dbProducts.length },
+    { id: "inventory", label: "Inventory", icon: Warehouse },
+    { id: "customers", label: "Customers", icon: Users, count: subscribers.length },
+    { id: "coupons", label: "Coupons", icon: Tag, count: COUPONS.length },
+    { id: "payments", label: "Payments", icon: CreditCard },
+    { id: "shipping", label: "Shipping", icon: Truck },
     { id: "reviews", label: "Reviews", icon: Star },
+    { id: "reports", label: "Reports", icon: BarChart3 },
+    { id: "cms", label: "CMS", icon: FileText },
     { id: "subscribers", label: "Subscribers", icon: Mail, count: subscribers.length },
-    { id: "coupons", label: "Coupons", icon: CircleDot, count: COUPONS.length },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   if (!authChecked || !authenticated) {
@@ -337,6 +375,20 @@ export default function AdminPage() {
           )}
 
           {tab === "reviews" && <ReviewsTab />}
+
+          {tab === "inventory" && <InventoryTab products={dbProducts} />}
+
+          {tab === "customers" && <CustomersTab subscribers={subscribers} orders={orders} />}
+
+          {tab === "payments" && <PaymentsTab orders={orders} />}
+
+          {tab === "shipping" && <ShippingTab />}
+
+          {tab === "reports" && <ReportsTab orders={orders} products={dbProducts} />}
+
+          {tab === "cms" && <CMSTab />}
+
+          {tab === "settings" && <SettingsTab />}
 
           {tab === "subscribers" && <SubscribersTab subscribers={subscribers} />}
 
@@ -1185,6 +1237,522 @@ function EmptyState({
       <Icon className="h-10 w-10 text-slate-600" />
       <h3 className="mt-3 font-serif text-lg font-semibold text-slate-300">{title}</h3>
       <p className="mt-1 max-w-xs text-sm text-slate-500">{subtitle}</p>
+    </div>
+  );
+}
+
+/* ---------------- Inventory ---------------- */
+function InventoryTab({ products }: { products: any[] }) {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "low" | "out">("all");
+
+  const lowStockThreshold = 5;
+  const filtered = products.filter((p) => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.sku?.toLowerCase().includes(search.toLowerCase());
+    const matchFilter =
+      filter === "all" ||
+      (filter === "low" && p.stock > 0 && p.stock <= lowStockThreshold) ||
+      (filter === "out" && p.stock === 0);
+    return matchSearch && matchFilter;
+  });
+
+  const totalStock = products.reduce((s, p) => s + (p.stock || 0), 0);
+  const lowCount = products.filter((p) => p.stock > 0 && p.stock <= lowStockThreshold).length;
+  const outCount = products.filter((p) => p.stock === 0).length;
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">Inventory</h1>
+        <p className="mt-1 text-sm text-slate-400">Stock overview · low stock · out of stock</p>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <PackageCheck className="h-5 w-5 text-emerald-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Total Stock Units</p>
+          <p className="font-serif text-2xl font-bold">{totalStock}</p>
+        </div>
+        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
+          <AlertTriangle className="h-5 w-5 text-amber-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Low Stock</p>
+          <p className="font-serif text-2xl font-bold text-amber-400">{lowCount}</p>
+        </div>
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5">
+          <AlertTriangle className="h-5 w-5 text-red-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Out of Stock</p>
+          <p className="font-serif text-2xl font-bold text-red-400">{outCount}</p>
+        </div>
+      </div>
+
+      {/* Search + filters */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or SKU…" className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm outline-none focus:border-gold/50" />
+        </div>
+        <div className="flex gap-1.5">
+          {(["all", "low", "out"] as const).map((f) => (
+            <button key={f} onClick={() => setFilter(f)} className={cn("rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide transition-all", filter === f ? "bg-gold text-primary" : "border border-white/10 text-slate-400 hover:text-slate-100")}>
+              {f === "all" ? "All" : f === "low" ? "Low Stock" : "Out of Stock"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full text-sm">
+          <thead className="bg-white/[0.05] text-xs uppercase tracking-wide text-slate-400">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Product</th>
+              <th className="px-4 py-3 text-left font-medium">SKU</th>
+              <th className="px-4 py-3 text-center font-medium">Stock</th>
+              <th className="px-4 py-3 text-center font-medium">Status</th>
+              <th className="px-4 py-3 text-right font-medium">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((p, i) => (
+              <tr key={p.id} className={cn("border-t border-white/5", i % 2 === 0 ? "bg-white/[0.01]" : "")}>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <img src={Array.isArray(p.images) ? p.images[0]?.src : ""} alt={p.name} className="h-8 w-8 rounded object-cover" />
+                    <span className="font-medium text-slate-100">{p.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-400">{p.sku}</td>
+                <td className="px-4 py-3 text-center font-semibold">{p.stock}</td>
+                <td className="px-4 py-3 text-center">
+                  {p.stock === 0 ? (
+                    <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-red-400">Out</span>
+                  ) : p.stock <= lowStockThreshold ? (
+                    <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-400">Low</span>
+                  ) : (
+                    <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-400">OK</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-gold">{formatPrice(p.price)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Customers ---------------- */
+function CustomersTab({ subscribers, orders }: { subscribers: any[]; orders: any[] }) {
+  const [search, setSearch] = useState("");
+
+  // Build customer list from subscribers + orders
+  const customerMap = new Map<string, { email: string; name: string; orders: number; totalSpent: number; createdAt: string }>();
+
+  subscribers.forEach((s) => {
+    customerMap.set(s.email, { email: s.email, name: s.name || s.email.split("@")[0], orders: 0, totalSpent: 0, createdAt: s.createdAt });
+  });
+
+  orders.forEach((o) => {
+    const existing = customerMap.get(o.email);
+    if (existing) {
+      existing.orders++;
+      existing.totalSpent += o.total || 0;
+    } else {
+      customerMap.set(o.email, { email: o.email, name: o.customerName, orders: 1, totalSpent: o.total || 0, createdAt: o.createdAt });
+    }
+  });
+
+  const customers = Array.from(customerMap.values()).filter(
+    (c) => !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">Customers</h1>
+        <p className="mt-1 text-sm text-slate-400">{customers.length} registered customers</p>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search customers…" className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm outline-none focus:border-gold/50" />
+      </div>
+
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full text-sm">
+          <thead className="bg-white/[0.05] text-xs uppercase tracking-wide text-slate-400">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Customer</th>
+              <th className="px-4 py-3 text-left font-medium">Email</th>
+              <th className="px-4 py-3 text-center font-medium">Orders</th>
+              <th className="px-4 py-3 text-right font-medium">Total Spent</th>
+              <th className="px-4 py-3 text-center font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customers.length === 0 ? (
+              <tr><td colSpan={5} className="px-4 py-12 text-center text-slate-500">No customers yet</td></tr>
+            ) : (
+              customers.map((c, i) => (
+                <tr key={c.email} className={cn("border-t border-white/5", i % 2 === 0 ? "bg-white/[0.01]" : "")}>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="grid h-8 w-8 place-items-center rounded-full bg-gold/20 text-xs font-bold text-gold">
+                        {c.name.slice(0, 2).toUpperCase()}
+                      </div>
+                      <span className="font-medium text-slate-100">{c.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">{c.email}</td>
+                  <td className="px-4 py-3 text-center">{c.orders}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-gold">{formatPrice(c.totalSpent)}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", c.orders > 0 ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>
+                      {c.orders > 0 ? "Active" : "Subscribed"}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Payments ---------------- */
+function PaymentsTab({ orders }: { orders: any[] }) {
+  const successful = orders.filter((o) => o.paymentMethod === "Online" || o.status === "DELIVERED");
+  const cod = orders.filter((o) => o.paymentMethod === "COD");
+  const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const codAmount = cod.reduce((s, o) => s + (o.total || 0), 0);
+  const onlineAmount = totalRevenue - codAmount;
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">Payments</h1>
+        <p className="mt-1 text-sm text-slate-400">Transactions · COD · Online · Refunds</p>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <DollarSign className="h-5 w-5 text-emerald-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Total Revenue</p>
+          <p className="font-serif text-xl font-bold">{formatPrice(totalRevenue)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <CreditCard className="h-5 w-5 text-blue-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Online</p>
+          <p className="font-serif text-xl font-bold">{formatPrice(onlineAmount)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <IndianRupee className="h-5 w-5 text-amber-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">COD</p>
+          <p className="font-serif text-xl font-bold">{formatPrice(codAmount)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <RotateCcw className="h-5 w-5 text-red-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Refunds</p>
+          <p className="font-serif text-xl font-bold">₹0</p>
+        </div>
+      </div>
+
+      {/* Transactions table */}
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full text-sm">
+          <thead className="bg-white/[0.05] text-xs uppercase tracking-wide text-slate-400">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Order #</th>
+              <th className="px-4 py-3 text-left font-medium">Customer</th>
+              <th className="px-4 py-3 text-center font-medium">Method</th>
+              <th className="px-4 py-3 text-center font-medium">Status</th>
+              <th className="px-4 py-3 text-right font-medium">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.length === 0 ? (
+              <tr><td colSpan={5} className="px-4 py-12 text-center text-slate-500">No transactions yet</td></tr>
+            ) : (
+              orders.map((o, i) => (
+                <tr key={o.id} className={cn("border-t border-white/5", i % 2 === 0 ? "bg-white/[0.01]" : "")}>
+                  <td className="px-4 py-3 font-mono text-xs text-gold">{o.orderNumber}</td>
+                  <td className="px-4 py-3 text-slate-200">{o.customerName}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", o.paymentMethod === "COD" ? "bg-amber-500/15 text-amber-400" : "bg-blue-500/15 text-blue-400")}>
+                      {o.paymentMethod}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", o.status === "DELIVERED" ? "bg-emerald-500/15 text-emerald-400" : o.status === "CANCELLED" ? "bg-red-500/15 text-red-400" : "bg-slate-500/15 text-slate-400")}>
+                      {o.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right font-semibold text-gold">{formatPrice(o.total)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Shipping ---------------- */
+function ShippingTab() {
+  const methods = [
+    { name: "White-Glove Delivery", desc: "Complimentary worldwide", zones: "All zones", charge: "Free", partner: "DHL / Bluedart", active: true },
+    { name: "Express Shipping", desc: "2-3 business days", zones: "India", charge: "₹250", partner: "Delhivery", active: true },
+    { name: "International Express", desc: "7-14 business days", zones: "Worldwide", charge: "₹2,500", partner: "DHL Express", active: true },
+    { name: "Standard International", desc: "14-21 business days", zones: "Worldwide", charge: "₹1,200", partner: "India Post", active: false },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">Shipping</h1>
+        <p className="mt-1 text-sm text-slate-400">Methods · zones · charges · delivery partners</p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {methods.map((m) => (
+          <div key={m.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <Truck className="h-5 w-5 text-gold" />
+                <h3 className="font-serif text-base font-semibold text-slate-100">{m.name}</h3>
+              </div>
+              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", m.active ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>
+                {m.active ? "Active" : "Inactive"}
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-slate-400">{m.desc}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div><span className="text-slate-500">Zone:</span> <span className="text-slate-200">{m.zones}</span></div>
+              <div><span className="text-slate-500">Charge:</span> <span className="text-gold">{m.charge}</span></div>
+              <div><span className="text-slate-500">Partner:</span> <span className="text-slate-200">{m.partner}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Reports ---------------- */
+function ReportsTab({ orders, products }: { orders: any[]; products: any[] }) {
+  const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const avgOrderValue = orders.length ? Math.round(totalRevenue / orders.length) : 0;
+  const totalUnits = products.reduce((s, p) => s + (p.stock || 0), 0);
+
+  // Top selling (by reviewCount as proxy)
+  const topProducts = [...products].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)).slice(0, 5);
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-serif text-3xl font-bold">Reports & Analytics</h1>
+          <p className="mt-1 text-sm text-slate-400">Sales · revenue · product performance</p>
+        </div>
+        <button className="flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
+          <Download className="h-3.5 w-3.5" /> Export CSV
+        </button>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <TrendingUp className="h-5 w-5 text-emerald-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Total Revenue</p>
+          <p className="font-serif text-xl font-bold">{formatPrice(totalRevenue)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <ShoppingBag className="h-5 w-5 text-blue-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Total Orders</p>
+          <p className="font-serif text-xl font-bold">{orders.length}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <IndianRupee className="h-5 w-5 text-amber-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Avg Order Value</p>
+          <p className="font-serif text-xl font-bold">{formatPrice(avgOrderValue)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <Package className="h-5 w-5 text-purple-400" />
+          <p className="mt-3 text-xs uppercase tracking-wide text-slate-400">Stock Units</p>
+          <p className="font-serif text-xl font-bold">{totalUnits}</p>
+        </div>
+      </div>
+
+      {/* Top products */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+        <h2 className="mb-4 font-serif text-lg font-semibold">Top Performing Products</h2>
+        <div className="space-y-3">
+          {topProducts.map((p, i) => (
+            <div key={p.id} className="flex items-center gap-3">
+              <span className="font-serif text-lg font-bold text-gold/60">#{i + 1}</span>
+              <img src={Array.isArray(p.images) ? p.images[0]?.src : ""} alt={p.name} className="h-10 w-8 rounded object-cover" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-slate-100">{p.name}</p>
+                <p className="text-xs text-slate-400">{p.reviewCount || 0} reviews · {p.rating || 5}★</p>
+              </div>
+              <span className="font-semibold text-gold">{formatPrice(p.price)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- CMS ---------------- */
+function CMSTab() {
+  const pages = [
+    { name: "Homepage", desc: "Hero, categories, best sellers, collections", status: "Published" },
+    { name: "Store Page", desc: "Full product listing with filters", status: "Published" },
+    { name: "Journal", desc: "Editorial blog with 6 articles", status: "Published" },
+    { name: "Order Tracking", desc: "Customer order lookup page", status: "Published" },
+    { name: "Gift Card Balance", desc: "Gift card balance checker", status: "Published" },
+    { name: "Admin Login", desc: "Admin authentication page", status: "Published" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">CMS</h1>
+        <p className="mt-1 text-sm text-slate-400">Pages · banners · content management</p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {pages.map((p) => (
+          <div key={p.name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <div>
+              <h3 className="font-serif text-sm font-semibold text-slate-100">{p.name}</h3>
+              <p className="text-xs text-slate-400">{p.desc}</p>
+            </div>
+            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-400">{p.status}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Announcement bar content */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+        <h2 className="mb-3 font-serif text-lg font-semibold">Announcement Bar Messages</h2>
+        <div className="space-y-2">
+          {["Complimentary white-glove delivery, worldwide", "Handcrafted in Kashmir · Estd. 2009", "Use code ZARIYA10 for 10% off your first order", "Each piece takes 150+ hours of artisan needlework"].map((msg, i) => (
+            <div key={i} className="flex items-center gap-2 rounded-lg bg-white/[0.02] px-3 py-2">
+              <span className="font-mono text-xs text-gold">#{i + 1}</span>
+              <span className="text-sm text-slate-300">{msg}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Settings ---------------- */
+function SettingsTab() {
+  const [storeName, setStoreName] = useState(BRAND.fullName);
+  const [email, setEmail] = useState(BRAND.email);
+  const [phone, setPhone] = useState(BRAND.phone);
+  const [currency, setCurrency] = useState("INR (₹)");
+  const [gst, setGst] = useState("5%");
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="font-serif text-3xl font-bold">Settings</h1>
+        <p className="mt-1 text-sm text-slate-400">Store · payment · shipping · security</p>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        {/* Store info */}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="mb-4 font-serif text-lg font-semibold">Store Information</h2>
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Store Name</label>
+              <input value={storeName} onChange={(e) => setStoreName(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Email</label>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Phone / WhatsApp</label>
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+          </div>
+        </div>
+
+        {/* Tax & currency */}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="mb-4 font-serif text-lg font-semibold">Tax & Currency</h2>
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Currency</label>
+              <input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">GST Rate</label>
+              <input value={gst} onChange={(e) => setGst(e.target.value)} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 outline-none focus:border-gold/50" />
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+              <span className="text-sm text-slate-300">GST included in prices</span>
+              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-400">YES</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment gateways */}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="mb-4 font-serif text-lg font-semibold">Payment Gateways</h2>
+          <div className="space-y-2">
+            {[
+              { name: "Cash on Delivery (COD)", active: true },
+              { name: "UPI / Razorpay", active: false },
+              { name: "Credit / Debit Card", active: false },
+              { name: "Google Pay", active: false },
+            ].map((pg) => (
+              <div key={pg.name} className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+                <span className="text-sm text-slate-300">{pg.name}</span>
+                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", pg.active ? "bg-emerald-500/15 text-emerald-400" : "bg-slate-500/15 text-slate-400")}>
+                  {pg.active ? "Active" : "Coming Soon"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Admin users */}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="mb-4 font-serif text-lg font-semibold">Admin Users & Roles</h2>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 rounded-lg bg-white/[0.02] px-3 py-2">
+              <Crown className="h-4 w-4 text-gold" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-100">ZARIYA Admin</p>
+                <p className="text-xs text-slate-400">admin@zariya.com</p>
+              </div>
+              <span className="rounded-full bg-gold/20 px-2 py-0.5 text-[10px] font-bold uppercase text-gold">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Save button */}
+      <button
+        onClick={() => toast.success("Settings saved")}
+        className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gold to-champagne px-6 py-2.5 text-xs font-semibold uppercase tracking-wide text-primary"
+      >
+        <Save className="h-4 w-4" /> Save Settings
+      </button>
     </div>
   );
 }

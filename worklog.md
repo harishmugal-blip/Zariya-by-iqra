@@ -1230,3 +1230,56 @@ Stage Summary:
 - NextAuth Google OAuth ready (needs GOOGLE_CLIENT_ID/SECRET env vars for real Google login).
 - Demo mode works without Google credentials.
 - Next: add Google credentials to .env for real OAuth, wire checkout to require login, order history page.
+
+---
+Task ID: 31
+Agent: Main (Z.ai Code) — Extend Admin Panel with Full E-commerce Modules
+Task: Analyze existing admin panel and add missing modules while preserving design
+
+Work Log:
+- User request: Extend existing admin panel with full e-commerce modules (13 areas) while preserving UI, colors, layout, sidebar, typography.
+- Analyzed existing admin: dark burgundy theme (bg-[hsl(352_30%_6%)]), gold accents, tab-based sidebar with 6 tabs (overview, orders, products, reviews, subscribers, coupons).
+- PRESERVED: All existing tabs, design, color scheme, sidebar, navbar, typography, existing routes, existing functionality.
+- Extended TabId type to include 7 new modules.
+- Added new icons to imports (Warehouse, CreditCard, Truck, BarChart3, FileText, Settings, etc.).
+- Updated tabs array with all 13 tabs (grouped logically).
+
+NEW MODULES ADDED (all matching existing dark burgundy + gold design):
+
+1. **Inventory Tab** — Stock overview with KPIs (total stock, low stock, out of stock), search, filter (all/low/out), responsive table with product, SKU, stock count, status badge, price.
+
+2. **Customers Tab** — Customer list merged from subscribers + orders, search, responsive table with avatar initials, email, order count, total spent, status (Active/Subscribed).
+
+3. **Payments Tab** — KPIs (total revenue, online, COD, refunds), transactions table with order #, customer, method (COD/Online), status, amount.
+
+4. **Shipping Tab** — Shipping methods cards (White-Glove, Express, International), zones, charges, delivery partners, active/inactive status.
+
+5. **Reports & Analytics Tab** — KPIs (revenue, orders, AOV, stock units), top performing products list, Export CSV button.
+
+6. **CMS Tab** — Published pages list (Homepage, Store, Journal, Tracking, Gift Card, Admin Login), announcement bar messages editor.
+
+7. **Settings Tab** — Store info form (name, email, phone), Tax & currency (INR, GST 5%), Payment gateways (COD active, UPI/Card/GPay coming soon), Admin users & roles (Super Admin), Save button with toast.
+
+DESIGN CONSISTENCY:
+- All new tabs use same dark burgundy bg, gold accents, white/10 borders, slate text.
+- Same card patterns (rounded-2xl border border-white/10 bg-white/[0.03]).
+- Same table styles (responsive, hover, status badges).
+- Same KPI card pattern as existing Overview.
+- Same font-serif headings, same icon sizing.
+- Toast notifications via sonner.
+- Loading states, empty states, search, filters.
+
+QA VERIFIED (agent-browser):
+- Admin login works → Overview shows.
+- 13 tabs in sidebar (Dashboard, Orders, Products, Inventory, Customers, Coupons, Payments, Shipping, Reviews, Reports, CMS, Subscribers, Settings).
+- Clicked Inventory → "Inventory" h1 shows with stock table.
+- Clicked Reports → "Reports & Analytics" h1 shows with KPIs + top products.
+- Clicked Settings → "Settings" h1 shows with store info, tax, payment, admin forms.
+- 0 console errors. Lint: 0 errors.
+
+Stage Summary:
+- Admin panel extended from 6 → 13 modules.
+- All existing functionality preserved (orders, products CRUD, reviews, subscribers, coupons).
+- 7 new modules added with realistic mock data and DB-backed data.
+- All new modules visually consistent with existing admin design.
+- Responsive tables, search, filters, loading/empty states throughout.
