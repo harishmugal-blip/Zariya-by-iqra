@@ -1343,3 +1343,41 @@ Stage Summary:
 - Export CSV: orders, products, customers ✅
 - Category CRUD API: ready (UI can be added) ✅
 - All existing functionality preserved.
+
+---
+Task ID: 33
+Agent: Main (Z.ai Code) — Admin Panel: Order Details Modal + Pagination
+Task: Add Order Details modal with timeline + invoice, pagination for orders table
+
+Work Log:
+- User request: "next roud" — continue with remaining admin features.
+
+NEW FEATURES:
+
+1. **Order Details Modal** (OrderDetailsModal component):
+   - **View** button on each order → opens full modal.
+   - **Order Timeline**: 4-step visual progress (Order Placed → Confirmed → Dispatched → Delivered) with gold progress line, active step ring, cancelled state.
+   - **Customer info**: name, email, phone.
+   - **Shipping address**: full address with city, state, pincode, country.
+   - **Items list**: image, name, color/size/qty, line total.
+   - **Payment info**: method, status, coupon code.
+   - **Order summary**: subtotal, discount, shipping (free), total.
+   - **Invoice download**: "Invoice" button opens print-friendly invoice in new tab (HTML with ZARIYA branding, item table, totals).
+   - **Status update**: dropdown to change order status from within modal.
+
+2. **Pagination** (OrdersTab):
+   - 10 orders per page.
+   - Prev/Next buttons with disabled states.
+   - "Page X of Y" indicator.
+   - Resets to page 1 when filter changes.
+
+QA VERIFIED (agent-browser):
+- Orders tab → "View" button found ✅
+- Click View → "Order Details" + "Order Timeline" shows ✅
+- "Invoice" button found ✅
+- 0 console errors. Lint: 0 errors.
+
+Stage Summary:
+- Order Details Modal with timeline + invoice print ✅
+- Pagination for orders (10 per page) ✅
+- Next: Settings save to DB, Category CRUD UI, pagination for other tables.

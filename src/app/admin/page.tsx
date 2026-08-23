@@ -869,6 +869,12 @@ function OrdersTab({
   onUpdateStatus: (id: string, status: string) => void;
 }) {
   const statuses = ["ALL", "PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"];
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
+  const [page, setPage] = useState(1);
+  const perPage = 10;
+  const totalPages = Math.ceil(orders.length / perPage);
+  const paginatedOrders = orders.slice((page - 1) * perPage, page * perPage);
+
   return (
     <div className="space-y-5">
       <div>
@@ -891,7 +897,7 @@ function OrdersTab({
           {statuses.map((s) => (
             <button
               key={s}
-              onClick={() => setStatusFilter(s)}
+              onClick={() => { setStatusFilter(s); setPage(1); }}
               className={cn(
                 "flex-none rounded-full px-3 py-1.5 text-xs font-medium transition-all",
                 statusFilter === s
@@ -913,61 +919,288 @@ function OrdersTab({
           subtitle="Orders placed on the storefront will appear here."
         />
       ) : (
-        <div className="space-y-3">
-          {orders.map((o, i) => (
-            <motion.div
-              key={o.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.03, ease: EASE }}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-semibold text-gold">{o.orderNumber}</span>
-                    <span
-                      className={cn(
-                        "rounded-full border px-2 py-0.5 text-[10px] font-semibold",
-                        STATUS_COLORS[o.status] || "bg-slate-100 text-slate-700 border-slate-200"
-                      )}
-                    >
-                      {o.status}
-                    </span>
+        <>
+          <div className="space-y-3">
+            {paginatedOrders.map((o, i) => (
+              <motion.div
+                key={o.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.03, ease: EASE }}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm font-semibold text-gold">{o.orderNumber}</span>
+                      <span
+                        className={cn(
+                          "rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+                          STATUS_COLORS[o.status] || "bg-slate-100 text-slate-700 border-slate-200"
+                        )}
+                      >
+                        {o.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-sm font-medium text-slate-200">{o.customerName}</p>
+                    <p className="truncate text-xs text-slate-500">
+                      {o.email} · {o.phone}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">
+                      {new Date(o.createdAt).toLocaleString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      · {o.items.length} item{o.items.length !== 1 ? "s" : ""} · {o.paymentMethod}
+                    </p>
                   </div>
-                  <p className="mt-1 truncate text-sm font-medium text-slate-200">{o.customerName}</p>
-                  <p className="truncate text-xs text-slate-500">
-                    {o.email} · {o.phone}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
-                    {new Date(o.createdAt).toLocaleString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}{" "}
-                    · {o.items.length} item{o.items.length !== 1 ? "s" : ""} · {o.paymentMethod}
-                  </p>
+                  <div className="flex items-center gap-2 sm:flex-col sm:items-end">
+                    <span className="font-serif text-xl font-bold text-gold">{formatPrice(o.total)}</span>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => setSelectedOrder(o)}
+                        className="flex items-center gap-1 rounded-lg bg-white/5 px-2.5 py-1.5 text-[10px] font-semibold text-slate-300 hover:bg-gold/20 hover:text-gold"
+                      >
+                        <Eye className="h-3 w-3" /> View
+                      </button>
+                      <select
+                        value={o.status}
+                        onChange={(e) => onUpdateStatus(o.id, e.target.value)}
+                        className="rounded-lg border border-white/10 bg-[hsl(352_30%_10%)] px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-gold/50"
+                      >
+                        {["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"].map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-                  <span className="font-serif text-xl font-bold text-gold">{formatPrice(o.total)}</span>
-                  <select
-                    value={o.status}
-                    onChange={(e) => onUpdateStatus(o.id, e.target.value)}
-                    className="rounded-lg border border-white/10 bg-[hsl(352_30%_10%)] px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-gold/50"
-                  >
-                    {["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"].map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-4">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 disabled:opacity-40 hover:border-gold/50"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-slate-400">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 disabled:opacity-40 hover:border-gold/50"
+              >
+                Next →
+              </button>
+            </div>
+          )}
+        </>
       )}
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onUpdateStatus={onUpdateStatus}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Order Details Modal ---------------- */
+function OrderDetailsModal({
+  order,
+  onClose,
+  onUpdateStatus,
+}: {
+  order: AdminOrder;
+  onClose: () => void;
+  onUpdateStatus: (id: string, status: string) => void;
+}) {
+  const STATUS_STEPS = [
+    { key: "PENDING", label: "Order Placed", icon: Clock },
+    { key: "CONFIRMED", label: "Confirmed", icon: CheckCircle2 },
+    { key: "SHIPPED", label: "Dispatched", icon: Truck },
+    { key: "DELIVERED", label: "Delivered", icon: PackageCheck },
+  ];
+  const stepIdx = STATUS_STEPS.findIndex((s) => s.key === order.status);
+  const isCancelled = order.status === "CANCELLED";
+
+  const handlePrint = () => {
+    const printContent = `
+      <html><head><title>Invoice - ${order.orderNumber}</title>
+      <style>body{font-family:Georgia,serif;padding:40px;color:#1E1E1E}
+      h1{color:#4A0E17}table{width:100%;border-collapse:collapse;margin:20px 0}
+      th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#FAF8F5}
+      .total{font-weight:bold;font-size:18px}.gold{color:#C5A059}</style></head><body>
+      <h1>ZARIYA by IQRA</h1>
+      <p>Timeless Kashmiri Elegance · Estd. 2009</p>
+      <hr>
+      <h2>Invoice: ${order.orderNumber}</h2>
+      <p><b>Customer:</b> ${order.customerName}<br>
+      <b>Email:</b> ${order.email}<br>
+      <b>Phone:</b> ${order.phone}<br>
+      <b>Address:</b> ${order.address}, ${order.city}, ${order.state} ${order.pincode}, ${order.country}<br>
+      <b>Date:</b> ${new Date(order.createdAt).toLocaleDateString("en-IN")}<br>
+      <b>Payment:</b> ${order.paymentMethod} · <b>Status:</b> ${order.status}</p>
+      <table><thead><tr><th>Item</th><th>Color</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>
+      ${order.items.map((it: any) => `<tr><td>${it.name}</td><td>${it.color || ""}</td><td>${it.size || ""}</td><td>${it.quantity}</td><td>₹${(it.price || 0).toLocaleString("en-IN")}</td><td>₹${((it.price || 0) * (it.quantity || 1)).toLocaleString("en-IN")}</td></tr>`).join("")}
+      </tbody></table>
+      <p>Subtotal: ₹${(order.subtotal || 0).toLocaleString("en-IN")}<br>
+      ${order.discount > 0 ? `Discount: -₹${(order.discount || 0).toLocaleString("en-IN")}<br>` : ""}
+      Shipping: Free<br>
+      <span class="total gold">Total: ₹${(order.total || 0).toLocaleString("en-IN")}</span></p>
+      <hr><p style="text-align:center;color:#999;font-size:12px">Thank you for choosing ZARIYA by IQRA · Handcrafted in Kashmir</p>
+      </body></html>
+    `;
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.write(printContent);
+      w.document.close();
+      w.print();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto scrollbar-lux rounded-3xl border border-white/10 bg-[hsl(352_30%_8%)] p-6"
+      >
+        {/* Header */}
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h2 className="font-serif text-xl font-bold text-slate-100">Order Details</h2>
+            <p className="font-mono text-sm text-gold">{order.orderNumber}</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handlePrint} className="flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-gold/50 hover:text-gold">
+              <Download className="h-3.5 w-3.5" /> Invoice
+            </button>
+            <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full text-slate-400 hover:bg-white/10 hover:text-white">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Status Timeline */}
+        <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Order Timeline</h3>
+          {isCancelled ? (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-3 text-center">
+              <p className="font-serif text-sm font-semibold text-red-400">Order Cancelled</p>
+            </div>
+          ) : (
+            <div className="relative flex justify-between">
+              {/* Progress line */}
+              <div className="absolute left-5 top-5 h-0.5 bg-white/10" style={{ width: "calc(100% - 40px)" }} />
+              <div
+                className="absolute left-5 top-5 h-0.5 bg-gold transition-all"
+                style={{ width: `calc((100% - 40px) * ${Math.max(0, stepIdx)} / ${STATUS_STEPS.length - 1})` }}
+              />
+              {STATUS_STEPS.map((step, i) => {
+                const Icon = step.icon;
+                const done = i <= stepIdx;
+                const active = i === stepIdx;
+                return (
+                  <div key={step.key} className="relative z-10 flex flex-col items-center gap-1">
+                    <div className={cn(
+                      "grid h-10 w-10 place-items-center rounded-full border-2 transition-all",
+                      done ? "border-gold bg-gold text-primary" : "border-white/20 bg-[hsl(352_30%_8%)] text-slate-500",
+                      active && "ring-4 ring-gold/20"
+                    )}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <span className={cn("text-[10px] font-medium", done ? "text-gold" : "text-slate-500")}>{step.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Customer + Shipping */}
+        <div className="mb-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Customer</h3>
+            <p className="text-sm font-medium text-slate-100">{order.customerName}</p>
+            <p className="text-xs text-slate-400">{order.email}</p>
+            <p className="text-xs text-slate-400">{order.phone}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Shipping Address</h3>
+            <p className="text-xs text-slate-300">{order.address}</p>
+            <p className="text-xs text-slate-300">{order.city}, {order.state} {order.pincode}</p>
+            <p className="text-xs text-slate-300">{order.country}</p>
+          </div>
+        </div>
+
+        {/* Items */}
+        <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Items ({order.items.length})</h3>
+          <div className="space-y-2">
+            {order.items.map((it: any, i: number) => (
+              <div key={i} className="flex items-center gap-3 rounded-lg bg-white/[0.02] p-2">
+                <img src={it.image} alt={it.name} className="h-12 w-10 rounded object-cover" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-slate-100">{it.name}</p>
+                  <p className="text-xs text-slate-500">{it.color} · {it.size} · × {it.quantity}</p>
+                </div>
+                <span className="text-sm font-semibold text-gold">{formatPrice((it.price || 0) * (it.quantity || 1))}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Summary + Payment */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Payment</h3>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-slate-400">Method</span><span className="font-medium text-slate-200">{order.paymentMethod}</span></div>
+              <div className="flex justify-between"><span className="text-slate-400">Status</span>
+                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", order.status === "DELIVERED" ? "bg-emerald-500/15 text-emerald-400" : order.status === "CANCELLED" ? "bg-red-500/15 text-red-400" : "bg-amber-500/15 text-amber-400")}>{order.status}</span>
+              </div>
+              {order.couponCode && <div className="flex justify-between"><span className="text-slate-400">Coupon</span><span className="font-medium text-gold">{order.couponCode}</span></div>}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Order Summary</h3>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-slate-400">Subtotal</span><span className="text-slate-200">{formatPrice(order.subtotal)}</span></div>
+              {order.discount > 0 && <div className="flex justify-between text-emerald-400"><span>Discount</span><span>−{formatPrice(order.discount)}</span></div>}
+              <div className="flex justify-between"><span className="text-slate-400">Shipping</span><span className="text-emerald-400">Free</span></div>
+              <div className="flex justify-between border-t border-white/10 pt-1"><span className="font-semibold text-slate-100">Total</span><span className="font-serif text-lg font-bold text-gold">{formatPrice(order.total)}</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Status update */}
+        <div className="mt-5 flex items-center gap-3 border-t border-white/10 pt-4">
+          <span className="text-xs text-slate-400">Update status:</span>
+          <select
+            value={order.status}
+            onChange={(e) => { onUpdateStatus(order.id, e.target.value); onClose(); }}
+            className="rounded-lg border border-white/10 bg-[hsl(352_30%_10%)] px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-gold/50"
+          >
+            {["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"].map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+      </motion.div>
     </div>
   );
 }
