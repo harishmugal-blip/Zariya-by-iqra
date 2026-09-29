@@ -20,7 +20,7 @@ export const BRAND = {
   // NOTE: Update with verified brand number before going live
   // phone: "+91XXXXXXXXXX",
   // whatsapp: "91XXXXXXXXXX",
-  email: "concierge@zariya.com",
+  email: "zariyabyiqra@gmail.com",
   instagram: "https://instagram.com",
   address: "Lal Chowk, Srinagar, Kashmir, India 190001",
   estd: 2009,

@@ -105,4 +105,4 @@ src/
 
 ## 📞 Support
 - WhatsApp: +91 98765 43210
-- Email: concierge@zariya.com
+- Email: zariyabyiqra@gmail.com
