@@ -15,7 +15,7 @@ const MESSAGES = [
 const KASHMIRI_ACCENTS = [
   "خوش آمدید", // Welcome
   "کشمیر · ۲۰۰۹", // Kashmir · 2009
-  "زرعیہ", // ZARIYA
+  "ذریعہ", // ZARIYA
   "دستکاری", // Craftsmanship
 ];
 

@@ -278,12 +278,12 @@ export function Header() {
 
         {/* Right — actions */}
         <div className="flex items-center gap-0.5">
-          {/* Currency switcher */}
+          {/* Currency switcher — desktop only */}
           <button
             onClick={() => setCurrency(currency === "INR" ? "USD" : "INR")}
             aria-label={`Switch currency, currently ${currency}`}
             className={cn(
-              "hidden rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-all sm:inline-flex",
+              "hidden rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-all lg:inline-flex",
               atTop
                 ? "border-white/30 text-white hover:border-gold hover:text-gold"
                 : "border-border text-foreground hover:border-gold hover:text-gold"
@@ -291,30 +291,40 @@ export function Header() {
           >
             {currency}
           </button>
-          <IconActionButton label="Search" onClick={openSearch} atTop={atTop}>
-            <Search className="h-[18px] w-[18px]" />
-          </IconActionButton>
-          <IconActionButton
-            label="Wishlist"
-            onClick={openWishlist}
-            badge={wishCount}
-            atTop={atTop}
-          >
-            <Heart className="h-[18px] w-[18px]" />
-          </IconActionButton>
-          <IconActionButton
-            label={customerUser ? customerUser.name : "Account"}
-            onClick={() => (customerUser ? handleAccountClick() : openAuth("login"))}
-            atTop={atTop}
-          >
-            {customerUser ? (
-              <span className="text-[10px] font-bold uppercase">
-                {customerUser.name.slice(0, 2)}
-              </span>
-            ) : (
-              <User className="h-[18px] w-[18px]" />
-            )}
-          </IconActionButton>
+          {/* Search — desktop only */}
+          <div className="hidden lg:block">
+            <IconActionButton label="Search" onClick={openSearch} atTop={atTop}>
+              <Search className="h-[18px] w-[18px]" />
+            </IconActionButton>
+          </div>
+          {/* Wishlist — desktop only */}
+          <div className="hidden lg:block">
+            <IconActionButton
+              label="Wishlist"
+              onClick={openWishlist}
+              badge={wishCount}
+              atTop={atTop}
+            >
+              <Heart className="h-[18px] w-[18px]" />
+            </IconActionButton>
+          </div>
+          {/* Account — desktop only */}
+          <div className="hidden lg:block">
+            <IconActionButton
+              label={customerUser ? customerUser.name : "Account"}
+              onClick={() => (customerUser ? handleAccountClick() : openAuth("login"))}
+              atTop={atTop}
+            >
+              {customerUser ? (
+                <span className="text-[10px] font-bold uppercase">
+                  {customerUser.name.slice(0, 2)}
+                </span>
+              ) : (
+                <User className="h-[18px] w-[18px]" />
+              )}
+            </IconActionButton>
+          </div>
+          {/* Cart — always visible (mobile + desktop) */}
           <IconActionButton
             label="Cart"
             onClick={openCart}
@@ -323,25 +333,22 @@ export function Header() {
           >
             <ShoppingBag className="h-[18px] w-[18px]" />
           </IconActionButton>
-
-          {/* Admin Login button — separate, always visible */}
-          <Link
-            href="/admin/login"
-            className={cn(
-              "ml-1 hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all sm:flex",
-              atTop
-                ? "border-gold/40 bg-gold/10 text-gold hover:bg-gold hover:text-primary"
-                : "border-gold/40 bg-gold/10 text-gold hover:bg-gold hover:text-primary"
-            )}
-          >
-            <Lock className="h-3 w-3" />
-            Admin
-          </Link>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} atTop={atTop} />
+      <MobileMenu
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        atTop={atTop}
+        customerUser={customerUser}
+        openAuth={openAuth}
+        openSearch={openSearch}
+        openWishlist={openWishlist}
+        currency={currency}
+        setCurrency={setCurrency}
+        wishCount={wishCount}
+      />
     </motion.header>
   );
 }
@@ -349,10 +356,24 @@ export function Header() {
 function MobileMenu({
   open,
   onOpenChange,
+  customerUser,
+  openAuth,
+  openSearch,
+  openWishlist,
+  currency,
+  setCurrency,
+  wishCount,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   atTop: boolean;
+  customerUser: any;
+  openAuth: (mode: "login" | "signup") => void;
+  openSearch: () => void;
+  openWishlist: () => void;
+  currency: string;
+  setCurrency: (c: "INR" | "USD") => void;
+  wishCount: number;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -442,11 +463,13 @@ function MobileMenu({
                 { href: "/artisans", label: "Artisan Stories" },
                 { href: "/sustainability", label: "Sustainability" },
                 { href: "/contact", label: "Contact" },
+                { href: "/track", label: "Track Order" },
+                { href: "/customer", label: customerUser ? "My Account" : "Sign In" },
               ].map((l) => (
                 <Link
-                  key={l.href}
+                  key={l.href + l.label}
                   href={l.href}
-                  onClick={() => onOpenChange(false)}
+                  onClick={() => { onOpenChange(false); if (l.label.includes("Sign In") || l.label.includes("Account")) { if (!customerUser) openAuth("login"); } }}
                   className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-gold/5 hover:text-primary"
                 >
                   {l.label}
@@ -454,6 +477,30 @@ function MobileMenu({
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile-only quick actions */}
+            <SectionLabel className="mt-7">Quick Actions</SectionLabel>
+            <div className="mt-2 flex flex-col gap-2">
+              <button
+                onClick={() => { onOpenChange(false); openSearch(); }}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-gold/5"
+              >
+                <Search className="h-4 w-4 text-gold" /> Search Products
+              </button>
+              <button
+                onClick={() => { onOpenChange(false); openWishlist(); }}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-gold/5"
+              >
+                <Heart className="h-4 w-4 text-gold" /> Wishlist ({wishCount})
+              </button>
+              <button
+                onClick={() => { onOpenChange(false); setCurrency(currency === "INR" ? "USD" : "INR"); }}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-gold/5"
+              >
+                <span className="h-4 w-4 grid place-items-center text-[10px] font-bold text-gold">{currency}</span>
+                Switch Currency ({currency})
+              </button>
+            </div>
           </div>
 
           {/* Footer band */}

@@ -100,7 +100,7 @@ export function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-10 text-center sm:px-6 lg:px-8">
           <div className="flex items-baseline gap-3">
             <span className="font-kashmiri text-2xl text-gold/80 sm:text-3xl">
-              زرعیہ
+              ذریعہ
             </span>
             <span className="font-serif text-3xl font-bold tracking-tight">
               {BRAND.name}
@@ -280,9 +280,10 @@ export function Footer() {
           </div>
           <a
             href="/admin/login"
-            className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/40 transition-colors hover:text-gold"
+            className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/20 transition-colors hover:text-gold"
+            aria-label="Admin access"
           >
-            Atelier Console
+            ·
           </a>
         </div>
       </div>

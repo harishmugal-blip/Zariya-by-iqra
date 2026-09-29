@@ -104,7 +104,7 @@ export function CustomerAuthModal() {
             <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-primary/10">
               <Crown className="h-6 w-6 text-primary" />
             </div>
-            <span className="font-kashmiri text-xl text-gold/80">زرعیہ</span>
+            <span className="font-kashmiri text-xl text-gold/80">ذریعہ</span>
             <h2 className="mt-1 font-serif text-2xl font-bold text-foreground">
               {mode === "login" ? "Welcome Back" : "Join ZARIYA"}
             </h2>

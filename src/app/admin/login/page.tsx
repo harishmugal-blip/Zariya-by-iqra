@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
           <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-gold/20">
             <Crown className="h-8 w-8 text-gold" />
           </div>
-          <span className="font-kashmiri text-2xl text-gold/80">زرعیہ</span>
+          <span className="font-kashmiri text-2xl text-gold/80">ذریعہ</span>
           <h1 className="mt-1 font-serif text-3xl font-bold text-primary-foreground">
             ZARIYA Admin
           </h1>

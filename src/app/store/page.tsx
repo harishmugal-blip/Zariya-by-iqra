@@ -281,7 +281,7 @@ export default function StorePage() {
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to Home
           </Link>
-          <span className="font-kashmiri text-2xl text-gold/80">زرعیہ</span>
+          <span className="font-kashmiri text-2xl text-gold/80">ذریعہ</span>
           <h1 className="mt-1 font-serif text-4xl font-bold sm:text-5xl">
             The ZARIYA Store
           </h1>

@@ -203,7 +203,7 @@ export default function Hero() {
       {/* Content */}
       <motion.div
         style={{ y: yContent, opacity: opacityContent }}
-        className="relative z-10 mx-auto flex min-h-[88vh] max-w-4xl flex-col items-center justify-center px-6 py-24 text-center"
+        className="relative z-10 mx-auto flex min-h-[88vh] max-w-4xl flex-col items-center justify-center px-6 pb-32 pt-24 text-center"
       >
         {/* Kashmiri script brand name */}
         <motion.div
@@ -213,7 +213,7 @@ export default function Hero() {
           className="mb-4"
         >
           <span className="font-kashmiri text-3xl font-medium sm:text-4xl md:text-5xl" style={{ color: "#B89A5A" }}>
-            زرعیہ
+            ذریعہ
           </span>
         </motion.div>
 
@@ -256,7 +256,7 @@ export default function Hero() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="mt-6 max-w-xl text-balance text-base sm:text-lg md:text-xl"
-            style={{ color: "#E8DED0" }}
+            style={{ color: "#F5EFE6" }}
           >
             {slide.subtitle}
           </motion.p>

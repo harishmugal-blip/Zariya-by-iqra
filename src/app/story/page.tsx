@@ -65,7 +65,7 @@ export default function StoryPage() {
             <Link href="/" className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-medium text-primary-foreground/80 transition-all hover:border-gold hover:text-gold">
               <ArrowLeft className="h-3.5 w-3.5" /> Back to Storefront
             </Link>
-            <span className="font-kashmiri text-3xl text-gold/80">زرعیہ</span>
+            <span className="font-kashmiri text-3xl text-gold/80">ذریعہ</span>
             <h1 className="mt-2 font-serif text-5xl font-bold sm:text-6xl md:text-7xl">
               Our Story
             </h1>
