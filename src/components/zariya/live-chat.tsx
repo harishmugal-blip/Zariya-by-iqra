@@ -114,7 +114,7 @@ export function LiveChat() {
         whileTap={{ scale: 0.92 }}
         onClick={() => setOpen((v) => !v)}
         aria-label="Open concierge chat"
-        className="fixed bottom-24 left-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground luxury-shadow-lg lg:bottom-6 lg:left-6"
+        className="fixed bottom-28 left-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground luxury-shadow-lg lg:bottom-6 lg:left-6"
       >
         <AnimatePresence mode="wait">
           {open ? (
@@ -146,7 +146,7 @@ export function LiveChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-36 left-4 z-40 flex h-[500px] w-[calc(100vw-2rem)] max-w-[370px] flex-col overflow-hidden rounded-3xl border border-border bg-card luxury-shadow-lg lg:bottom-24 lg:left-6"
+            className="fixed bottom-40 left-4 z-40 flex h-[500px] w-[calc(100vw-2rem)] max-w-[370px] flex-col overflow-hidden rounded-3xl border border-border bg-card luxury-shadow-lg lg:bottom-24 lg:left-6"
           >
             {/* Header */}
             <div className="relative overflow-hidden bg-primary px-4 py-4 text-primary-foreground">

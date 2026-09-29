@@ -17,6 +17,9 @@ export const BRAND = {
   tagline: "Timeless Kashmiri Elegance",
   phone: "+919876543210",
   whatsapp: "919876543210",
+  // NOTE: Update with verified brand number before going live
+  // phone: "+91XXXXXXXXXX",
+  // whatsapp: "91XXXXXXXXXX",
   email: "concierge@zariya.com",
   instagram: "https://instagram.com",
   address: "Lal Chowk, Srinagar, Kashmir, India 190001",

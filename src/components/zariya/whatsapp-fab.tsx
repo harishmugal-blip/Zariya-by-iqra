@@ -30,7 +30,7 @@ export function WhatsAppFab() {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.4, ease: LUX_EASE }}
       whileTap={{ scale: 0.94 }}
-      className="group fixed bottom-24 right-4 z-40 flex items-center lg:bottom-6 lg:right-6"
+      className="group fixed bottom-28 right-4 z-40 flex items-center lg:bottom-6 lg:right-6"
     >
       {/* Pulsing ring */}
       <span className="pointer-events-none absolute right-0 h-14 w-14 rounded-full bg-emerald/40 animate-pulse-ring" />
